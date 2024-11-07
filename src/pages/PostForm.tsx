@@ -1,4 +1,4 @@
-import { useState, FormEvent, useEffect } from 'react';
+import { useState, FormEvent, useEffect, useRef } from 'react';
 import {
   Post,
   addPost,
@@ -7,6 +7,11 @@ import {
 } from '../firebase/firestoreService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
+import 'react-quill/dist/quill.snow.css';
+import ReactQuill, { Quill } from 'react-quill';
+import imageResize from 'quill-image-resize-module-react';
+
+Quill.register('modules/imageResize', imageResize);
 
 const PostForm = () => {
   const { boardName, postId } = useParams<{
@@ -19,6 +24,7 @@ const PostForm = () => {
   const [content, setContent] = useState('');
   const navigate = useNavigate();
   const { nickname } = useAuth();
+  const quillRef = useRef<ReactQuill>(null);
 
   const BoardOptions: {
     [key: string]: { categories: string[]; purposes?: string[] };
@@ -51,21 +57,33 @@ const PostForm = () => {
 
   const handleSumbit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const requiresPurpose = currentOptions?.purposes
+      ? currentOptions.purposes.length > 0
+      : false;
+
+    if (!title || !content || !category || (requiresPurpose && !purpose)) {
+      alert('입력되지 않은 항목이 있습니다!');
+      return;
+    }
+    const editor = quillRef.current?.getEditor();
+    const contentHtml = editor ? editor.root.innerHTML : '';
+
     if (postId) {
       await updatePost(boardName || 'defaultBoard', postId, {
         title,
-        content,
+        content: contentHtml,
         category,
-        purpose: purpose || null
+        purpose: requiresPurpose ? purpose || null : null
       });
     } else {
       addPost(
         boardName || 'defaultBoard',
         title,
-        content,
+        contentHtml,
         nickname,
         category,
-        purpose || null
+        requiresPurpose ? purpose || null : null
       );
     }
     navigate(`/${boardName}`);
@@ -74,8 +92,12 @@ const PostForm = () => {
     navigate(`/${boardName}`);
   };
 
+  // const handleImageUpload = async(file: File) => {
+
+  // }
+
   return (
-    <form onSubmit={handleSumbit}>
+    <form className="container mx-auto p-20" onSubmit={handleSumbit}>
       <table>
         <tbody>
           <tr>
@@ -134,12 +156,67 @@ const PostForm = () => {
         </tbody>
       </table>
       <div>
-        <textarea
+        <ReactQuill
           value={content}
-          onChange={e => setContent(e.target.value)}></textarea>
+          onChange={setContent}
+          placeholder="내용을 입력하세요"
+          ref={quillRef}
+          modules={{
+            toolbar: [
+              [{ header: '1' }, { header: '2' }, { font: [] }],
+              [{ size: [] }],
+              ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+              [{ list: 'ordered' }, { list: 'bullet' }],
+              [{ align: [] }],
+              [{ color: [] }, { background: [] }],
+              [
+                'link',
+                'image'
+                // {
+                //   key: 'image'
+                //   handler: () => handleImage(quillRef.current?.getEditor())
+                // }
+              ],
+              ['clean']
+            ],
+            clipboard: {
+              matchVisual: false
+            },
+            imageResize: {
+              modules: ['Resize', 'DisplaySize', 'Toolbar']
+            }
+            // handlers: {
+            //   image: () => handleImage(quillRef.current?.getEditor())
+            // }
+          }}
+          formats={[
+            'header',
+            'font',
+            'size',
+            'bold',
+            'italic',
+            'underline',
+            'strike',
+            'blockquote',
+            'list',
+            'bullet',
+            'align',
+            'color',
+            'background',
+            'link',
+            'image'
+          ]}
+        />
       </div>
-      <button type="submit">{postId ? '수정 완료' : '등록'}</button>
-      <button type="button" onClick={handleCancel}>
+      <button
+        type="submit"
+        className="mt-4 mr-4 px-4 py-2 bg-sky-300 text-white rounded-lg">
+        {postId ? '수정 완료' : '등록'}
+      </button>
+      <button
+        type="button"
+        className="mt-4 px-4 py-2 border rounded-lg hover:bg-gray-100 transition"
+        onClick={handleCancel}>
         취소
       </button>
     </form>

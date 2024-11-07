@@ -1,9 +1,15 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/firebaseConfig';
 import { useState } from 'react';
-import styles from './SignUp.module.css';
 import { useNavigate } from 'react-router-dom';
-import { doc, setDoc } from 'firebase/firestore';
+import {
+  collection,
+  doc,
+  getDocs,
+  query,
+  setDoc,
+  where
+} from 'firebase/firestore';
 
 const SignUp = () => {
   const [email, setEmail] = useState('');
@@ -11,10 +17,35 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  // const [isNicknameTaken, setIsNicknameTaken] = useState(false);
   const navigate = useNavigate();
+
+  // const checkDuplicateNickname = async (nickname: string) => {
+  //   const usersCollection = collection(db, 'users');
+  //   const q = query(usersCollection, where('nickname', '==', nickname));
+  //   const snapshot = await getDocs(q);
+  //   return snapshot.empty;
+  // };
+
+  // useEffect(() => {
+  //   const checkNickname = async () => {
+  //     if (nickname) {
+  //       const isAvailable = await checkDuplicateNickname(nickname);
+  //       console.log(`Nickname availability for '${nickname}': ${isAvailable}`);
+  //       setIsNicknameTaken(!isAvailable);
+  //     } else {
+  //       setIsNicknameTaken(false);
+  //     }
+  //   };
+  // }, [nickname]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    // if (isNicknameTaken) {
+    //   setError('이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
+    //   return;
+    // }
 
     if (password !== confirmPassword) {
       setError('비밀번호가 일치하지 않습니다.');
@@ -55,7 +86,7 @@ const SignUp = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className={styles.signUpForm}>
+      <form onSubmit={handleSubmit} className="flex flex-col">
         <label htmlFor="email">이메일 : </label>
         <input
           id="email"
@@ -76,6 +107,9 @@ const SignUp = () => {
           value={nickname}
           onChange={handleChange}
         />
+        {/* {isNicknameTaken && (
+          <p className={styles.errorMessage}>이미 사용 중인 닉네임입니다.</p>
+        )} */}
         <label htmlFor="password"> 비밀번호 : </label>
         <input
           id="password"
@@ -96,7 +130,7 @@ const SignUp = () => {
           value={confirmPassword}
           onChange={handleChange}
         />
-        {error && <p className={styles.errorMessage}>{error}</p>}
+        {error && <p className="text-red-500">{error}</p>}
         <button>회원가입</button>
       </form>
     </div>

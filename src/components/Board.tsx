@@ -5,14 +5,18 @@ import { Post, getPost } from '../firebase/firestoreService';
 import Pagination from './Pagination';
 
 const Board = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [posts, setPosts] = useState<Post[]>([]);
   const { boardName } = useParams<{ boardName: string }>();
+  const location = useLocation();
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const postPerPage = 5;
+  const queryParams = new URLSearchParams(location.search);
+  const initialPage = queryParams.get('page')
+    ? Number(queryParams.get('page')!)
+    : 1;
+  const [currentPage, setCurrentPage] = useState(initialPage);
+  const postPerPage = 10;
 
   if (!authContext) {
     return null;
@@ -24,18 +28,11 @@ const Board = () => {
     const fetchPosts = async () => {
       if (boardName) {
         const fetchedPost = (await getPost(boardName)) as Post[];
+        fetchedPost.sort((a, b) => {
+          return b.createdAt.getTime() - a.createdAt.getTime();
+        });
 
-        // const testPosts = Array.from({ length: 50 }, (_, i) => ({
-        //   id: `test-${i + 1}`,
-        //   title: `테스트 제목${i + 1}`,
-        //   content: `테스트 내용${i + 1}`,
-        //   nickname: `작성자 ${i + 1}`,
-        //   category: '카테고리',
-        //   purpose: '목적',
-        //   createdAt: new Date()
-        // }));
         setPosts(fetchedPost);
-        // setPosts([...fetchedPost, ...testPosts]);
       }
     };
     fetchPosts();
@@ -54,43 +51,69 @@ const Board = () => {
   };
 
   const handlePostClick = (postId: string) => {
-    navigate(`/${boardName}/post/${postId}`);
+    navigate(`/${boardName}/post/${postId}?page=${currentPage}`);
+  };
+
+  const updatePage = (page: number) => {
+    setCurrentPage(page);
+    navigate(`/${boardName}?page=${page}`);
   };
 
   return (
-    <div>
+    <div className="container mx-auto p-10">
       {!location.pathname.includes('newPost') && (
-        <button onClick={handleNewPostClick}>글 쓰기</button>
+        <div className="flex justify-end mb-4">
+          <button
+            onClick={handleNewPostClick}
+            className="px-4 py-2 bg-sky-300 text-white rounded-lg">
+            글 쓰기
+          </button>
+        </div>
       )}
       {currentPosts.length > 0 ? (
-        <table>
-          <thead>
+        <table className="w-full text-center mb-4">
+          <thead className="border-b">
             <tr>
-              <th>제목</th>
-              <th>작성자</th>
-              <th>작성 시간</th>
+              <th className="py-2">제목</th>
+              <th className="py-2">작성자</th>
+              <th className="py-2">작성 시간</th>
             </tr>
           </thead>
           <tbody>
             {currentPosts.map(post => (
-              <tr key={post.id} onClick={() => handlePostClick(post.id)}>
-                <td>{post.title}</td>
-                <td>{post.nickname}</td>
-                <td>{post.createdAt.toLocaleString()}</td>
+              <tr
+                key={post.id}
+                onClick={() => handlePostClick(post.id)}
+                className="cursor-pointer hover:bg-gray-100">
+                <td className="py-2 text-left pl-4">{post.title}</td>
+                <td className="py-2">{post.nickname}</td>
+                <td className="py-2">
+                  {post.createdAt.toLocaleString('ko-KR', {
+                    year: 'numeric',
+                    month: '2-digit',
+                    day: '2-digit',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: true
+                  })}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : (
-        <p>게시물이 없습니다.</p>
+        <p className="text-center mb-4">게시물이 없습니다.</p>
       )}
+      <div className="flex justify-center mt-4">
+        <Pagination
+          totalPosts={posts.length}
+          postPerPage={postPerPage}
+          currentPage={currentPage}
+          setCurrentPage={updatePage}
+        />
+      </div>
+
       <Outlet />
-      <Pagination
-        totalPosts={posts.length}
-        postPerPage={postPerPage}
-        currentPage={currentPage}
-        setCurrentPage={setCurrentPage}
-      />
     </div>
   );
 };

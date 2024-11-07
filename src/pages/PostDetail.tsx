@@ -1,10 +1,19 @@
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Post, deletePost, updatePost } from '../firebase/firestoreService';
-import { doc, getDoc } from 'firebase/firestore';
+import { Post, deletePost } from '../firebase/firestoreService';
+import {
+  arrayRemove,
+  arrayUnion,
+  doc,
+  getDoc,
+  increment,
+  updateDoc
+} from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import CommentSection from '../components/CommentSection';
 import { AuthContext } from '../context/AuthContext';
+import DOMPurify from 'dompurify';
+import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
 
 const PostDetail = () => {
   const { boardName, postId } = useParams<{
@@ -15,6 +24,10 @@ const PostDetail = () => {
   const authContext = useContext(AuthContext);
   const navigate = useNavigate();
 
+  const [liked, setLiked] = useState(false);
+  const [likecount, setLikeCount] = useState(0);
+  const [hovered, setHovered] = useState(false);
+
   useEffect(() => {
     const fetchPost = async () => {
       if (boardName && postId) {
@@ -24,8 +37,16 @@ const PostDetail = () => {
             setPost({
               id: postDoc.id,
               createdAt: postDoc.data().createdAt.toDate(),
+              likeCount: postDoc.data().likeCount || 0,
               ...postDoc.data()
             } as Post);
+            const hasLiked = postDoc
+              .data()
+              .likeByUsers?.includes(authContext?.nickname);
+            // setLiked(postDoc.data().includes(authContext?.nickname));
+            // setLikeCount(postDoc.data().likeCount || 0);
+            setLiked(hasLiked || false);
+            setLikeCount(postDoc.data().likeCount || 0);
           } else {
             console.log('No such post!');
           }
@@ -35,7 +56,7 @@ const PostDetail = () => {
       }
     };
     fetchPost();
-  }, [boardName, postId]);
+  }, [boardName, postId, authContext?.nickname]);
 
   const handleDeletePost = async () => {
     if (post && boardName) {
@@ -57,35 +78,90 @@ const PostDetail = () => {
     }
   };
 
+  const sanitizedContent = post?.content
+    ? DOMPurify.sanitize(post.content, { USE_PROFILES: { html: true } })
+    : '';
+
+  const toggleLike = async () => {
+    if (!boardName || !postId) {
+      throw new Error('게시물 ID 또는 보드 이름이 유효하지 않습니다.');
+    }
+
+    const postRef = doc(db, boardName, postId);
+
+    try {
+      if (liked) {
+        await updateDoc(postRef, {
+          likeByUsers: arrayRemove(authContext?.nickname),
+          likeCount: increment(-1)
+        });
+      } else {
+        await updateDoc(postRef, {
+          likeByUsers: arrayUnion(authContext?.nickname),
+          likeCount: increment(1)
+        });
+      }
+      setLiked(!liked);
+      setLikeCount(prevCount => (liked ? prevCount - 1 : prevCount + 1));
+    } catch (error) {
+      console.log('toggleLike Error', error);
+    }
+  };
+
   return (
-    <div>
+    <div className="container mx-auto p-20">
       {post ? (
         <>
-          <table>
+          <table className="w-full mb-4 border">
             <tbody>
               <tr>
-                <td>제목</td>
+                <td className="font-bold">제목</td>
                 <td>{post.title}</td>
               </tr>
               <tr>
-                <td>카테고리</td>
+                <td className="font-bold">카테고리</td>
                 <td>{post.category}</td>
               </tr>
               {post.purpose && (
                 <tr>
-                  <td>목적</td>
+                  <td className="font-bold">목적</td>
                   <td>{post.purpose}</td>
                 </tr>
               )}
             </tbody>
           </table>
-          <div>{post.content}</div>
-          {authContext?.isSignIn && post.nickname === authContext.nickname && (
-            <>
-              <button onClick={handleDeletePost}>삭제</button>
-              <button onClick={handleUpdatePost}>수정</button>
-            </>
-          )}
+          <div
+            dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+            className="mb-4"></div>
+          <div className="flex justify-between items-center mb-4">
+            <button
+              className="flex items-center py-2 rounded-lg transition"
+              onClick={toggleLike}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}>
+              {liked || hovered ? (
+                <VscHeartFilled size={20} />
+              ) : (
+                <VscHeart size={20} />
+              )}
+              <span className="ml-2">{likecount}</span>
+            </button>
+            {authContext?.isSignIn &&
+              post.nickname === authContext.nickname && (
+                <div className="flex space-x-4">
+                  <button
+                    className="hover:underline hover:text-red-500"
+                    onClick={handleDeletePost}>
+                    삭제
+                  </button>
+                  <button
+                    className="hover:underline hover:text-sky-ㄷ00"
+                    onClick={handleUpdatePost}>
+                    수정
+                  </button>
+                </div>
+              )}
+          </div>
           <CommentSection postId={postId || ''} />
         </>
       ) : (

@@ -3,6 +3,7 @@ import { ReactNode, useEffect, useState } from 'react';
 import { auth, db } from '../firebase/firebaseConfig';
 import { AuthContext } from './AuthContext';
 import { doc, getDoc } from 'firebase/firestore';
+import CreateNickname from '../pages/CreateNickname';
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children
@@ -19,7 +20,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         if (userDoc.exists()) {
           const fetchedNicname = userDoc.data().nickname;
           console.log('Fetched nickname: ', fetchedNicname);
-          setNickname(fetchedNicname);
+          setNickname(fetchedNicname || currentUser.displayName || '사용자');
         }
         setUser(currentUser);
       } else {
@@ -34,8 +35,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, loading, setUser, isSignIn, nickname }}>
-      {!loading && children}
+      value={{ user, loading, setUser, isSignIn, nickname, setNickname }}>
+      {!loading && (nickname === null ? <CreateNickname /> : children)}
     </AuthContext.Provider>
   );
 };

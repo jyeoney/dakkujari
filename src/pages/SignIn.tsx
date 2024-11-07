@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import styles from './SignIn.module.css';
-import { auth } from '../firebase/firebaseConfig';
+import { auth, db } from '../firebase/firebaseConfig';
 import {
   signInWithEmailAndPassword,
   signInWithPopup,
@@ -8,9 +7,10 @@ import {
 } from 'firebase/auth';
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 const SignIn = () => {
-  const { setUser } = useAuth();
+  const { setUser, setNickname } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -46,8 +46,23 @@ const SignIn = () => {
     const provider = new GoogleAuthProvider();
     try {
       const result = await signInWithPopup(auth, provider);
-      console.log(result.user);
-      setUser(result.user);
+      const user = result.user;
+      console.log(user);
+
+      const userDoc = await getDoc(doc(db, 'users', user.uid));
+
+      if (!userDoc.exists()) {
+        // await setDoc(doc(db, 'users', user.uid), {
+        //   nickanme: user.displayName || '사용자',
+        //   email: user.email
+        // });
+        await setDoc(doc(db, 'users', user.uid), {
+          nickname: user.displayName || '사용자'
+        });
+      }
+      setUser(user);
+      setNickname(user.displayName || '사용자');
+
       navigate('/');
     } catch (error) {
       if (error instanceof Error) {
@@ -55,6 +70,11 @@ const SignIn = () => {
         setError('구글 로그인에 실패했습니다. 다시 시도해주세요.');
       }
     }
+  };
+
+  const signInWithKakao = () => {
+    const kakaoLoginUrl = `https://kauth.kakao.com/oauth/authorize?client_id=${import.meta.env.VITE_REST_API_KEY}&redirect_uri=${import.meta.env.VITE_REDIRECT_URI}&response_type=code`;
+    window.location.href = kakaoLoginUrl;
   };
 
   return (
@@ -78,12 +98,14 @@ const SignIn = () => {
         />
         <button type="submit">로그인</button>
       </form>
-      {error && <p className={styles.errorMessage}>{error}</p>}
+      {error && <p className="tex-red-500">{error}</p>}
       <div>
         <button name="Google" onClick={signInWithGoogle}>
           Google 로그인
         </button>
-        <button name="Google">Kakao 로그인</button>
+        <button name="Kakao" onClick={signInWithKakao}>
+          Kakao 로그인
+        </button>
       </div>
     </div>
   );
