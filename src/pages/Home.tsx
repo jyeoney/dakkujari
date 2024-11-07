@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import {
   getAllPostsBySearchQuery,
   getTopPosts
@@ -6,6 +6,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { VscHeartFilled } from 'react-icons/vsc';
 import { BOARD_CONFIG } from '../constant/boardConfig';
+import { AuthContext } from '../context/AuthContext';
 
 interface SearchResult {
   id: string;
@@ -20,15 +21,15 @@ const Home = () => {
   const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searchField, setSearchField] = useState('title');
   const [hasSearched, setHasSearched] = useState(false);
-
   const [topPosts, setTopPosts] = useState<{ board: string; posts: any[] }[]>(
     []
   );
   const boardNames = Object.keys(BOARD_CONFIG) as Array<
     keyof typeof BOARD_CONFIG
   >;
-
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
+
   useEffect(() => {
     const fetchTopPosts = async () => {
       const allTopPosts = await Promise.all(
@@ -57,68 +58,68 @@ const Home = () => {
     navigate(`/${boardName}/post/${postId}`);
   };
 
+  const handleNewPostClick = (boardName: string) => {
+    if (authContext?.isSignIn) {
+      navigate(`/${boardName}/newPost`);
+    } else {
+      alert('글쓰기는 로그인 후 이용 가능합니다.');
+    }
+  };
+
   return (
     <div className="flex space-x-8 p-16">
       <section className="w-1/2">
         <h2 className="text-xl font-bold mb-4">
           <span className="text-sky-300">HOT</span> 게시물
         </h2>
-        {topPosts.length > 0 ? (
-          <ul>
-            {topPosts.map(boardTopPosts => (
-              <div key={boardTopPosts.board} className="mb-6">
-                <h3 className="text-lg font-semibold mb-2">
-                  {
-                    BOARD_CONFIG[
-                      boardTopPosts.board as keyof typeof BOARD_CONFIG
-                    ]
-                  }
-                </h3>
-                <ul>
-                  {boardTopPosts.posts.map(post => (
-                    <li
-                      key={post.id}
-                      onClick={() =>
-                        handleClickPost(boardTopPosts.board, post.id)
-                      }
-                      className="list-none p-4 border rounded-lg shadow cursor-pointer hover:bg-gray-100 flex item-start">
-                      <div className="flex-grow">
-                        <h4 className="font-semibold">{post.title}</h4>
-                        <div className="flex items-center space-x-2 mt-2">
-                          <span>{post.nickname}</span>
-                          <div className="flex items-center space-x-1">
-                            <VscHeartFilled />
-                            <span>{post.likeCount}</span>
-                          </div>
-                          <span className="text-sm text-gray-500">
-                            {post.createdAt.toLocaleString('ko-KR', {
-                              year: 'numeric',
-                              month: '2-digit',
-                              day: '2-digit'
-                            })}
-                          </span>
+        {topPosts.map(boardTopPosts => (
+          <div key={boardTopPosts.board} className="mb-6">
+            <h3 className="text-lg font-semibold mb-2">
+              {BOARD_CONFIG[boardTopPosts.board as keyof typeof BOARD_CONFIG]}
+            </h3>
+            {boardTopPosts.posts.length > 0 ? (
+              <ul>
+                {boardTopPosts.posts.map(post => (
+                  <li
+                    key={post.id}
+                    onClick={() =>
+                      handleClickPost(boardTopPosts.board, post.id)
+                    }
+                    className="list-none p-4 border rounded-lg shadow cursor-pointer hover:bg-gray-100 flex item-start">
+                    <div className="flex-grow">
+                      <h4 className="font-semibold">{post.title}</h4>
+                      <div className="flex items-center space-x-2 mt-2">
+                        <span>{post.nickname}</span>
+                        <div className="flex items-center space-x-1">
+                          <VscHeartFilled />
+                          <span>{post.likeCount}</span>
                         </div>
-                        {/* {post.imageUrl && (
-                          <div className="w-16 h-16 ml-4 overflow-hidden rounded">
-                            <img
-                              src={post.imageUrl}
-                              alt="게시물 이미지"
-                              className="object-cover w-full h-full"
-                            /> 
-                          </div>
-                        )} */}
+                        <span className="text-sm text-gray-500">
+                          {post.createdAt.toLocaleString('ko-KR', {
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit'
+                          })}
+                        </span>
                       </div>
-                    </li>
-                  ))}
-                </ul>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div>
+                <p>
+                  게시판에 글을 업로드하여 HOT 게시물의 주인공이 되어보세요!
+                </p>
+                <button
+                  onClick={() => handleNewPostClick(boardTopPosts.board)}
+                  className="mt-2 px-4 py-2 bg-sky-300 text-white rounded-lg">
+                  글쓰기
+                </button>
               </div>
-            ))}
-          </ul>
-        ) : (
-          <p>
-            지금 바로 게시판에 글을 업로드하여 HOT 게시물의 주인공이 되어보세요!
-          </p>
-        )}
+            )}
+          </div>
+        ))}
       </section>
       <section className="w-1/2">
         <div className="mb-4">

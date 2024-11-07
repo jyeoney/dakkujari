@@ -66,7 +66,7 @@ const Board = () => {
           <button
             onClick={handleNewPostClick}
             className="px-4 py-2 bg-sky-300 text-white rounded-lg">
-            글 쓰기
+            글쓰기
           </button>
         </div>
       )}

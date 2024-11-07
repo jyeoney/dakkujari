@@ -1,9 +1,10 @@
-import { useState, FormEvent, useEffect, useRef } from 'react';
+import { useState, FormEvent, useEffect, useRef, ChangeEvent } from 'react';
 import {
   Post,
   addPost,
   getPost,
-  updatePost
+  updatePost,
+  uploadImage
 } from '../firebase/firestoreService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -22,6 +23,7 @@ const PostForm = () => {
   const [category, setCategory] = useState('');
   const [purpose, setPurpose] = useState('');
   const [content, setContent] = useState('');
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { nickname } = useAuth();
   const quillRef = useRef<ReactQuill>(null);
@@ -74,7 +76,8 @@ const PostForm = () => {
         title,
         content: contentHtml,
         category,
-        purpose: requiresPurpose ? purpose || null : null
+        purpose: requiresPurpose ? purpose || null : null,
+        imageFile
       });
     } else {
       addPost(
@@ -83,7 +86,8 @@ const PostForm = () => {
         contentHtml,
         nickname,
         category,
-        requiresPurpose ? purpose || null : null
+        requiresPurpose ? purpose || null : null,
+        imageFile
       );
     }
     navigate(`/${boardName}`);
@@ -92,9 +96,35 @@ const PostForm = () => {
     navigate(`/${boardName}`);
   };
 
-  // const handleImageUpload = async(file: File) => {
+  // const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files?.[0];
+  //   if (file) {
+  //     setImageFile(file);
+  //   }
+  // };
 
-  // }
+  const imageHandler = async () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) {
+        try {
+          const imageUrl = await uploadImage(file);
+          const editor = quillRef.current?.getEditor();
+          const range = editor?.getSelection();
+          if (range) {
+            editor?.insertEmbed(range.index, 'image', imageUrl);
+          }
+        } catch (error) {
+          console.error('이미지 업로드 실패', error);
+        }
+      }
+    };
+  };
 
   return (
     <form className="container mx-auto p-20" onSubmit={handleSumbit}>
@@ -169,14 +199,7 @@ const PostForm = () => {
               [{ list: 'ordered' }, { list: 'bullet' }],
               [{ align: [] }],
               [{ color: [] }, { background: [] }],
-              [
-                'link',
-                'image'
-                // {
-                //   key: 'image'
-                //   handler: () => handleImage(quillRef.current?.getEditor())
-                // }
-              ],
+              ['link', 'image'],
               ['clean']
             ],
             clipboard: {
@@ -184,10 +207,10 @@ const PostForm = () => {
             },
             imageResize: {
               modules: ['Resize', 'DisplaySize', 'Toolbar']
+            },
+            handlers: {
+              image: imageHandler
             }
-            // handlers: {
-            //   image: () => handleImage(quillRef.current?.getEditor())
-            // }
           }}
           formats={[
             'header',

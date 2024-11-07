@@ -47,11 +47,12 @@ export const addPost = async (
   content: string,
   nickname: string,
   category: string,
-  purpose?: string | null
-  // imageUrl?: string
+  purpose?: string | null,
+  imageFile?: File | null
 ) => {
   const titleTokens = tokenizeText(title);
   const contentTokens = tokenizeText(content);
+  let imageUrl = imageFile ? await uploadImage(imageFile) : null;
 
   await addDoc(collection(db, boardName), {
     title,
@@ -63,8 +64,8 @@ export const addPost = async (
     likeCount: 0,
     likeByUsers: [],
     titleTokens,
-    contentTokens
-    // imageUrl: imageUrl || null
+    contentTokens,
+    imageUrl: imageUrl || null
   });
 };
 
@@ -156,10 +157,22 @@ export const updatePost = async (
     content: string;
     category: string;
     purpose: string | null;
-    // imageUrl: string | null;
+    imageFile?: File | null;
   }
 ) => {
-  await updateDoc(doc(db, boardName, postId), updatedData);
+  let imageUrl = updatedData.imageFile
+    ? await uploadImage(updatedData.imageFile)
+    : null;
+
+  const dataToUpdate = {
+    title: updatedData.title,
+    content: updatedData.content,
+    category: updatedData.category,
+    purpose: updatedData.purpose,
+    imageUrl: imageUrl
+  };
+
+  await updateDoc(doc(db, boardName, postId), dataToUpdate);
 };
 
 export const getAllPostsBySearchQuery = async (
@@ -238,11 +251,19 @@ export const getTopPosts = async (boardName: string) => {
   }));
 };
 
-// export const uploadImage = async (file: File) => {
-//   const storage = getStorage();
-//   const storageRef = ref(storage, `images/${file.name}`);
+export const uploadImage = async (file: File): Promise<string> => {
+  const storage = getStorage();
+  const storageRef = ref(storage, `images/${file.name}`);
 
-//   await uploadBytes(storageRef, file);
-//   const url = await getDownloadURL(storageRef);
-//   return url;
-// };
+  try {
+    await uploadBytes(storageRef, file);
+    console.log('파일 업로드 완료');
+
+    const url = await getDownloadURL(storageRef);
+    console.log('업로드된 이미지 URL:', url);
+    return url;
+  } catch (error) {
+    console.error('이미지 업로드 중 오류 발생:', error);
+    throw new Error('이미지 업로드에 실패했습니다');
+  }
+};

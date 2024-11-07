@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/firebaseConfig';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   collection,
@@ -17,35 +17,41 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
-  // const [isNicknameTaken, setIsNicknameTaken] = useState(false);
+  const [isNicknameTaken, setIsNicknameTaken] = useState(false);
   const navigate = useNavigate();
 
-  // const checkDuplicateNickname = async (nickname: string) => {
-  //   const usersCollection = collection(db, 'users');
-  //   const q = query(usersCollection, where('nickname', '==', nickname));
-  //   const snapshot = await getDocs(q);
-  //   return snapshot.empty;
-  // };
+  const checkDuplicateNickname = async (nickname: string) => {
+    const usersCollection = collection(db, 'users');
+    const q = query(usersCollection, where('nickname', '==', nickname));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
+  };
 
-  // useEffect(() => {
-  //   const checkNickname = async () => {
-  //     if (nickname) {
-  //       const isAvailable = await checkDuplicateNickname(nickname);
-  //       console.log(`Nickname availability for '${nickname}': ${isAvailable}`);
-  //       setIsNicknameTaken(!isAvailable);
-  //     } else {
-  //       setIsNicknameTaken(false);
-  //     }
-  //   };
-  // }, [nickname]);
+  useEffect(() => {
+    const checkNickname = async () => {
+      if (nickname) {
+        const isTaken = await checkDuplicateNickname(nickname);
+        setIsNicknameTaken(isTaken);
+        setError(
+          isTaken
+            ? '이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.'
+            : null
+        );
+      } else {
+        setIsNicknameTaken(false);
+        setError(null);
+      }
+    };
+
+    checkNickname();
+  }, [nickname]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    // if (isNicknameTaken) {
-    //   setError('이미 사용 중인 닉네임입니다. 다른 닉네임을 선택해주세요.');
-    //   return;
-    // }
+    if (isNicknameTaken) {
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError('비밀번호가 일치하지 않습니다.');
@@ -60,8 +66,8 @@ const SignUp = () => {
       const user = userCredential.user;
 
       await setDoc(doc(db, 'users', user.uid), {
-        email: email,
-        nickname: nickname
+        email,
+        nickname
       });
       alert('회원가입이 성공적으로 완료되었습니다!');
       navigate('/');
@@ -97,7 +103,7 @@ const SignUp = () => {
           value={email}
           onChange={handleChange}
         />
-        <label htmlFor="email">닉네임 : </label>
+        <label htmlFor="nickname">닉네임 : </label>
         <input
           id="nickname"
           name="nickname"
@@ -107,9 +113,7 @@ const SignUp = () => {
           value={nickname}
           onChange={handleChange}
         />
-        {/* {isNicknameTaken && (
-          <p className={styles.errorMessage}>이미 사용 중인 닉네임입니다.</p>
-        )} */}
+        {isNicknameTaken && <p className="text-red-500">{error}</p>}
         <label htmlFor="password"> 비밀번호 : </label>
         <input
           id="password"
@@ -130,7 +134,7 @@ const SignUp = () => {
           value={confirmPassword}
           onChange={handleChange}
         />
-        {error && <p className="text-red-500">{error}</p>}
+        {error && !isNicknameTaken && <p className="text-red-500">{error}</p>}
         <button>회원가입</button>
       </form>
     </div>

@@ -2,7 +2,6 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebaseConfig';
-import { useEffect } from 'react';
 
 const Header = () => {
   const { user, nickname } = useAuth();
