@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { signOut } from 'firebase/auth';
 import { auth } from '../firebase/firebaseConfig';
@@ -6,9 +6,23 @@ import { auth } from '../firebase/firebaseConfig';
 const Header = () => {
   const { user, nickname } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
   const handleSignOut = () => {
     signOut(auth);
+  };
+
+  const handleDeleteAccount = async () => {
+    const isConfirmed = window.confirm('정말 탈퇴하시겠습니까?');
+    if (isConfirmed) {
+      try {
+        await user?.delete();
+        alert('회원 탈퇴가 완료되었습니다.');
+        navigate('/');
+      } catch (error) {
+        alert('회원 탈퇴에 실패했습니다. 다시 시도해주세요');
+      }
+    }
   };
 
   const isCurrentPage = (boardPath: string) =>
@@ -32,6 +46,11 @@ const Header = () => {
                 onClick={handleSignOut}
                 className="px-3 py-1 bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
                 로그아웃
+              </button>
+              <button
+                className="px-3 py-1 bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition"
+                onClick={handleDeleteAccount}>
+                회원 탈퇴
               </button>
             </div>
           ) : (
