@@ -14,7 +14,6 @@ import OAuthCallback from './pages/OAuthCallback';
 import './css/tailwind.css';
 import './css/custom.css';
 import SearchResults from './pages/SearchResults';
-import Board from './components/Board';
 // import { updateAllPostsFormat } from './firebase/firestoreService';
 
 function App() {
