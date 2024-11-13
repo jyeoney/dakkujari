@@ -113,8 +113,7 @@ const Board = () => {
           setCurrentPage={updatePage}
         />
       </div>
-
-      <Outlet />
+      {/* <Outlet /> */}
     </div>
   );
 };
