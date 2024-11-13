@@ -49,21 +49,21 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/create-nickname" element={<CreateNickname />} />
           <Route path="/auth/kakao/callback" element={<OAuthCallback />} />
-          {/* <Route path="/:boardName" element={<ReviewAndTips />} />
+          <Route path="/:boardName" element={<ReviewAndTips />} />
           <Route path="/:boardName" element={<DakkuGallery />} />
           <Route path="/:boardName" element={<DakkuQnA />} />
           <Route path=":boardName/newPost" element={<PostForm />} />
           <Route path=":boardName/post/:postId" element={<PostDetail />} />
-          <Route path=":boardName/editPost/:postId" element={<PostForm />} /> */}
-          <Route path="/:boardName" element={<Board />}>
-            <Route index element={<ReviewAndTips />} /> {/* 기본 컴포넌트 */}
+          <Route path=":boardName/editPost/:postId" element={<PostForm />} />
+          {/* <Route path="/:boardName" element={<Board />}>
+            <Route index element={<ReviewAndTips />} /> 
             <Route path="dakkuGallery" element={<DakkuGallery />} />
             <Route path="dakkuQnA" element={<DakkuQnA />} />
           </Route>
           <Route path="/:boardName/newPost" element={<PostForm />} />
           <Route path="/:boardName/editPost/:postId" element={<PostForm />} />
           <Route path="/:boardName/post/:postId" element={<PostDetail />} />
-          <Route path="/search" element={<SearchResults />} />
+          <Route path="/search" element={<SearchResults />} /> */}
         </Routes>
       </main>
     </div>
