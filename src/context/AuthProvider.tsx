@@ -19,7 +19,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
         if (userDoc.exists()) {
           const fetchedNicname = userDoc.data().nickname;
-          console.log('Fetched nickname: ', fetchedNicname);
           setNickname(fetchedNicname || currentUser.displayName || '사용자');
         }
         setUser(currentUser);
