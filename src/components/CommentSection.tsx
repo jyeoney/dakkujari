@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import {
   addComment,
@@ -6,7 +6,6 @@ import {
   getComments,
   updateComment
 } from '../firebase/firestoreService';
-import { AuthContext } from '../context/AuthContext';
 
 export interface Comment {
   id: string;
@@ -18,8 +17,7 @@ export interface Comment {
 const CommentSection = ({ postId }: { postId: string }) => {
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
-  const { nickname, isSignIn } = useAuth();
-  const user = useContext(AuthContext);
+  const { user, nickname, isSignIn } = useAuth();
 
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null);
   const [editingCommentContent, setEditingCommentContent] = useState('');
@@ -108,7 +106,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
                   hour12: true
                 })}
               </span>
-              {user && user.nickname === comment.author && (
+              {user && nickname === comment.author && (
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleDeleteComment(comment.id)}
@@ -154,7 +152,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
         />
         <button
           type="submit"
-          className="bg-sky-300 text-white rounded w-20 px-2 py-2 flex flex-col justify-center items-center">
+          className="bg-sky-300 text-white rounded-lg w-20 px-2 py-2 flex flex-col justify-center items-center">
           <span>댓글</span>
           <span>작성</span>
         </button>

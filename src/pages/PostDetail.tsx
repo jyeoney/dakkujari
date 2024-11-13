@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Post, deletePost } from '../firebase/firestoreService';
 import {
@@ -11,9 +11,9 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import CommentSection from '../components/CommentSection';
-import { AuthContext } from '../context/AuthContext';
 import DOMPurify from 'dompurify';
 import { VscHeart, VscHeartFilled } from 'react-icons/vsc';
+import { useAuth } from '../hooks/useAuth';
 
 const PostDetail = () => {
   const { boardName, postId } = useParams<{
@@ -21,7 +21,7 @@ const PostDetail = () => {
     postId: string;
   }>();
   const [post, setPost] = useState<Post | null>(null);
-  const authContext = useContext(AuthContext);
+  const { isSignIn, nickname } = useAuth();
   const navigate = useNavigate();
 
   const [liked, setLiked] = useState(false);
@@ -40,9 +40,7 @@ const PostDetail = () => {
               likeCount: postDoc.data().likeCount || 0,
               ...postDoc.data()
             } as Post);
-            const hasLiked = postDoc
-              .data()
-              .likeByUsers?.includes(authContext?.nickname);
+            const hasLiked = postDoc.data().likeByUsers?.includes(nickname);
             // setLiked(postDoc.data().includes(authContext?.nickname));
             // setLikeCount(postDoc.data().likeCount || 0);
             setLiked(hasLiked || false);
@@ -56,7 +54,7 @@ const PostDetail = () => {
       }
     };
     fetchPost();
-  }, [boardName, postId, authContext?.nickname]);
+  }, [boardName, postId, nickname]);
 
   const handleDeletePost = async () => {
     if (post && boardName) {
@@ -92,12 +90,12 @@ const PostDetail = () => {
     try {
       if (liked) {
         await updateDoc(postRef, {
-          likeByUsers: arrayRemove(authContext?.nickname),
+          likeByUsers: arrayRemove(nickname),
           likeCount: increment(-1)
         });
       } else {
         await updateDoc(postRef, {
-          likeByUsers: arrayUnion(authContext?.nickname),
+          likeByUsers: arrayUnion(nickname),
           likeCount: increment(1)
         });
       }
@@ -135,7 +133,7 @@ const PostDetail = () => {
             className="mb-4"></div>
           <div className="flex justify-between items-center mb-4">
             <button
-              className="flex items-center py-2 rounded-lg transition"
+              className="flex items-center justify-center p-2 rounded-lg transition border "
               onClick={toggleLike}
               onMouseEnter={() => setHovered(true)}
               onMouseLeave={() => setHovered(false)}>
@@ -144,23 +142,24 @@ const PostDetail = () => {
               ) : (
                 <VscHeart size={20} />
               )}
-              <span className="ml-2">{likecount}</span>
+              <span className="ml-2 text-xl relative top-[1px]">
+                {likecount}
+              </span>
             </button>
-            {authContext?.isSignIn &&
-              post.nickname === authContext.nickname && (
-                <div className="flex space-x-4">
-                  <button
-                    className="hover:underline hover:text-red-500"
-                    onClick={handleDeletePost}>
-                    삭제
-                  </button>
-                  <button
-                    className="hover:underline hover:text-sky-ㄷ00"
-                    onClick={handleUpdatePost}>
-                    수정
-                  </button>
-                </div>
-              )}
+            {isSignIn && post.nickname === nickname && (
+              <div className="flex space-x-4">
+                <button
+                  className="hover:underline hover:text-sky-500"
+                  onClick={handleUpdatePost}>
+                  수정
+                </button>
+                <button
+                  className="hover:underline hover:text-red-500"
+                  onClick={handleDeletePost}>
+                  삭제
+                </button>
+              </div>
+            )}
           </div>
           <CommentSection postId={postId || ''} />
         </>

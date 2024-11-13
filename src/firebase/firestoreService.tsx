@@ -86,8 +86,8 @@ export const getPost = async (
         purpose: data.purpose,
         createdAt: data.createdAt.toDate(),
         likeCount: data.likeCount || 0,
-        likeByUsers: data.likeByUsers || []
-        // imageUrl: data.imageUrl || null
+        likeByUsers: data.likeByUsers || [],
+        imageUrl: data.imageUrl || null
       } as Post;
     } else {
       throw new Error('게시물을 찾을 수 없습니다.');
@@ -202,8 +202,6 @@ export const getAllPostsBySearchQuery = async (
         postsCollection,
         where('nickname', '>=', lowerSearchQuery[0]),
         where('nickname', '<=', lowerSearchQuery[0] + '\uf8ff')
-        // where('nickname', '>=', lowerSearchQuery),
-        // where('nickname', '<=', lowerSearchQuery + '\uf8ff')
       );
     } else {
       q = query(postsCollection);
@@ -217,19 +215,10 @@ export const getAllPostsBySearchQuery = async (
         title: doc.data().title,
         content: doc.data().content,
         nickname: doc.data().nickname,
-        createdAt: doc.data().createdAt.toDate()
-        // imageUrl: doc.data().imageUrl || null
+        createdAt: doc.data().createdAt.toDate(),
+        imageUrl: doc.data().imageUrl || null
       });
     }
-    // const snapshot = await getDocs(postsCollection);
-    // for (const doc of snapshot.docs) {
-    //   results.push({
-    //     id: doc.id,
-    //     boardName,
-    //     createdAt: doc.data().createdAt.toDate(),
-    //     ...doc.data()
-    //   });
-    // }
   }
   return results.sort((a, b) => b.createdAt - a.createdAt);
 };
@@ -254,18 +243,44 @@ export const getTopPosts = async (boardName: string) => {
 export const uploadImage = async (file: File): Promise<string> => {
   const storage = getStorage();
   const storageRef = ref(storage, `images/${file.name}`);
+  // await uploadBytes(storageRef, file);
+  // return await getDownloadURL(storageRef);
 
-  // try {
-  //   await uploadBytes(storageRef, file);
-  //   console.log('파일 업로드 완료');
+  try {
+    await uploadBytes(storageRef, file);
+    console.log('파일 업로드 완료');
 
-  //   const url = await getDownloadURL(storageRef);
-  //   console.log('업로드된 이미지 URL:', url);
-  //   return url;
-  // } catch (error) {
-  //   console.error('이미지 업로드 중 오류 발생:', error);
-  //   throw new Error('이미지 업로드에 실패했습니다');
-  // }
-  await uploadBytes(storageRef, file);
-  return await getDownloadURL(storageRef);
+    const url = await getDownloadURL(storageRef);
+    console.log('업로드된 이미지 URL:', url);
+    return url;
+  } catch (error) {
+    console.error('이미지 업로드 중 오류 발생:', error);
+    throw new Error('이미지 업로드에 실패했습니다');
+  }
 };
+
+// export const updateAllPostsFormat = async (boardName: string) => {
+
+//   const postsCollection = collection(db, boardName);
+//   const snapshot = await getDocs(postsCollection);
+
+//   const updates = snapshot.docs.map(async postDoc => {
+//     const data = postDoc.data();
+
+//     const titleTokens = tokenizeText(data.title);
+//     const contentTokens = tokenizeText(data.content);
+//     const imageUrl = data.imageUrl || null;
+
+//     const updatedData = {
+//       ...data,
+//       titleTokens,
+//       contentTokens,
+//       imageUrl
+//     };
+
+//     await updateDoc(doc(db, boardName, postDoc.id), updatedData);
+//   });
+
+//   await Promise.all(updates);
+//   console.log('모든 게시글 형식이 업데이트되었습니다.');
+// };

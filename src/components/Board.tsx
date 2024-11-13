@@ -1,12 +1,11 @@
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { AuthContext } from '../context/AuthContext';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Post, getPost } from '../firebase/firestoreService';
 import Pagination from './Pagination';
+import { useAuth } from '../hooks/useAuth';
 
 const Board = () => {
   const navigate = useNavigate();
-  const authContext = useContext(AuthContext);
   const [posts, setPosts] = useState<Post[]>([]);
   const { boardName } = useParams<{ boardName: string }>();
   const location = useLocation();
@@ -18,11 +17,7 @@ const Board = () => {
   const [currentPage, setCurrentPage] = useState(initialPage);
   const postPerPage = 10;
 
-  if (!authContext) {
-    return null;
-  }
-
-  const { isSignIn } = authContext;
+  const { isSignIn } = useAuth();
 
   useEffect(() => {
     const fetchPosts = async () => {
@@ -76,6 +71,10 @@ const Board = () => {
             <tr>
               <th className="py-2">제목</th>
               <th className="py-2">작성자</th>
+              <th className="py-2">카테고리</th>
+              {currentPosts.some(post => post.purpose) && (
+                <th className="py-2">목적</th>
+              )}
               <th className="py-2">작성 시간</th>
             </tr>
           </thead>
@@ -87,6 +86,8 @@ const Board = () => {
                 className="cursor-pointer hover:bg-gray-100">
                 <td className="py-2 text-left pl-4">{post.title}</td>
                 <td className="py-2">{post.nickname}</td>
+                <td className="py-2">{post.category}</td>
+                {post.purpose && <td className="py-2">{post.purpose}</td>}
                 <td className="py-2">
                   {post.createdAt.toLocaleString('ko-KR', {
                     year: 'numeric',

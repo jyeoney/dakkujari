@@ -91,51 +91,77 @@ const SignUp = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit} className="flex flex-col">
-        <label htmlFor="email">이메일 : </label>
-        <input
-          id="email"
-          name="email"
-          type="text"
-          placeholder="이메일을 입력하세요"
-          required
-          value={email}
-          onChange={handleChange}
-        />
-        <label htmlFor="nickname">닉네임 : </label>
-        <input
-          id="nickname"
-          name="nickname"
-          type="text"
-          placeholder="닉네임을 입력하세요"
-          required
-          value={nickname}
-          onChange={handleChange}
-        />
+    <div className="flex justify-center h-screen">
+      <form onSubmit={handleSubmit} className="w-full p-8">
+        <div className="mb-4">
+          <label htmlFor="email">이메일</label>
+          <input
+            id="email"
+            name="email"
+            type="text"
+            placeholder="이메일을 입력하세요"
+            required
+            value={email}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="nickname">닉네임</label>
+          <input
+            id="nickname"
+            name="nickname"
+            type="text"
+            placeholder="닉네임을 입력하세요"
+            required
+            value={nickname}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
         {isNicknameTaken && <p className="text-red-500">{error}</p>}
-        <label htmlFor="password"> 비밀번호 : </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          placeholder="비밀번호를 입력하세요"
-          required
-          value={password}
-          onChange={handleChange}
-        />
-        <label htmlFor="confirmPassword"> 비밀번호 확인 : </label>
-        <input
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          placeholder="비밀번호를 다시 입력하세요"
-          required
-          value={confirmPassword}
-          onChange={handleChange}
-        />
-        {error && !isNicknameTaken && <p className="text-red-500">{error}</p>}
-        <button>회원가입</button>
+        <div className="mb-4">
+          <label htmlFor="password"> 비밀번호</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="비밀번호를 입력하세요"
+            required
+            value={password}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="confirmPassword"> 비밀번호 확인</label>
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            placeholder="비밀번호를 다시 입력하세요"
+            required
+            value={confirmPassword}
+            onChange={handleChange}
+            className="w-full px-3 py-2 border rounded"
+          />
+        </div>
+        {error && !isNicknameTaken && (
+          <p className="text-red-500 mb-4">{error}</p>
+        )}
+        <div className="flex space-x-4">
+          <button
+            type="button"
+            onClick={() => navigate('/')}
+            className="w-full px-3 py-2 bg-gray-200 rounded-md hover:bg-gray-200">
+            취소
+          </button>
+          <button
+            type="submit"
+            className="w-full px-3 py-2 text-white bg-sky-300 rounded-md hover:bg-sky-400">
+            회원가입
+          </button>
+        </div>
       </form>
     </div>
   );

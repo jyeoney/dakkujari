@@ -30,7 +30,7 @@ const Header = () => {
 
   return (
     <header className="w-full bg-sky-100 shadow">
-      <div className="container mx-auto flex items-center justify-between px-16 py-4">
+      <div className="container mx-auto flex items-center justify-between px-16 lg:px-32 py-4">
         <Link to="/" className="text-xl font-bold">
           {'다꾸자리'}
         </Link>
@@ -55,14 +55,14 @@ const Header = () => {
             </div>
           ) : (
             <div className="flex flex-col items-end space-y-1">
-              <Link to="/sign-up">
-                <button className="px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
-                  회원가입
-                </button>
-              </Link>
               <Link to="/sign-in">
                 <button className="px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
                   로그인
+                </button>
+              </Link>
+              <Link to="/sign-up">
+                <button className="px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
+                  회원가입
                 </button>
               </Link>
             </div>

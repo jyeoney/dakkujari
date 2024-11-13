@@ -8,6 +8,8 @@ import {
 import { useAuth } from '../hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
+import { FcGoogle } from 'react-icons/fc';
+import { RiKakaoTalkFill } from 'react-icons/ri';
 
 const SignIn = () => {
   const { setUser, setNickname } = useAuth();
@@ -52,10 +54,6 @@ const SignIn = () => {
       const userDoc = await getDoc(doc(db, 'users', user.uid));
 
       if (!userDoc.exists()) {
-        // await setDoc(doc(db, 'users', user.uid), {
-        //   nickanme: user.displayName || '사용자',
-        //   email: user.email
-        // });
         await setDoc(doc(db, 'users', user.uid), {
           nickname: user.displayName || '사용자'
         });
@@ -78,34 +76,60 @@ const SignIn = () => {
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input
-          name="email"
-          type="text"
-          placeholder="이메일을 입력하세요"
-          required
-          value={email}
-          onChange={handleChange}
-        />
-        <input
-          name="password"
-          type="password"
-          placeholder="비밀번호를 입력하세요"
-          required
-          value={password}
-          onChange={handleChange}
-        />
-        <button type="submit">로그인</button>
-      </form>
-      {error && <p className="tex-red-500">{error}</p>}
-      <div>
-        <button name="Google" onClick={signInWithGoogle}>
-          Google 로그인
-        </button>
-        <button name="Kakao" onClick={signInWithKakao}>
-          Kakao 로그인
-        </button>
+    <div className='className="flex justify-center h-screen"'>
+      <div className="w-full p-8">
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label htmlFor="email" className="block">
+              이메일
+            </label>
+            <input
+              name="email"
+              type="text"
+              placeholder="이메일을 입력하세요"
+              required
+              value={email}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded"
+            />
+          </div>
+          <div className="mb-4">
+            <label htmlFor="password" className="block">
+              비밀번호
+            </label>
+            <input
+              name="password"
+              type="password"
+              placeholder="비밀번호를 입력하세요"
+              required
+              value={password}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border rounded"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full px-3 py-2 text-white bg-sky-300 rounded-md hover:bg-sky-600">
+            로그인
+          </button>
+        </form>
+        {error && <p className="tex-red-500">{error}</p>}
+        <div className="mt-4">
+          <button
+            name="Google"
+            className="flex items-center justify-center w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+            onClick={signInWithGoogle}>
+            <FcGoogle className="mr-2" size={24} />
+            Google 로그인
+          </button>
+          <button
+            name="Kakao"
+            className="mt-4 flex items-center justify-center w-full px-4 py-2 text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+            onClick={signInWithKakao}>
+            <RiKakaoTalkFill className="mr-2" size={24} />
+            Kakao 로그인
+          </button>
+        </div>
       </div>
     </div>
   );
