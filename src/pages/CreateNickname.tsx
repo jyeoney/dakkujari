@@ -43,6 +43,7 @@ const CreateNickname = () => {
 
         <button type="submit">닉네임 설정</button>
       </form>
+      {error && <p className="text-red-500">{error}</p>}
     </div>
   );
 };

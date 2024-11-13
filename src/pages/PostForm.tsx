@@ -28,7 +28,7 @@ const PostForm = () => {
   const [category, setCategory] = useState('');
   const [purpose, setPurpose] = useState('');
   const [content, setContent] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  // const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { nickname } = useAuth();
   const quillRef = useRef<ReactQuill>(null);
@@ -81,8 +81,8 @@ const PostForm = () => {
         title,
         content: contentHtml,
         category,
-        purpose: requiresPurpose ? purpose || null : null,
-        imageFile
+        purpose: requiresPurpose ? purpose || null : null
+        // imageFile
       });
     } else {
       addPost(
@@ -91,8 +91,8 @@ const PostForm = () => {
         contentHtml,
         nickname,
         category,
-        requiresPurpose ? purpose || null : null,
-        imageFile
+        requiresPurpose ? purpose || null : null
+        // imageFile
       );
     }
     navigate(`/${boardName}`);
@@ -101,30 +101,30 @@ const PostForm = () => {
     navigate(`/${boardName}`);
   };
 
-  const imageHandler = async () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
+  // const imageHandler = async () => {
+  //   const input = document.createElement('input');
+  //   input.setAttribute('type', 'file');
+  //   input.setAttribute('accept', 'image/*');
+  //   input.click();
 
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (file) {
-        try {
-          console.log(file);
-          const imageUrl = await uploadImage(file);
-          // const editor = quillRef.current?.getEditor();
-          // const range = editor?.getSelection();
-          // if (range) {
-          //   editor?.insertEmbed(range.index, 'image', imageUrl);
-          // }
-        } catch (error) {
-          console.error('이미지 업로드 실패:', error);
-          alert('이미지 업로드 중 오류가 발생했습니다.');
-        }
-      }
-    };
-  };
+  //   input.onchange = async () => {
+  //     const file = input.files?.[0];
+  //     if (file) {
+  //       try {
+  //         console.log(file);
+  //         const imageUrl = await uploadImage(file);
+  //         const editor = quillRef.current?.getEditor();
+  //         const range = editor?.getSelection();
+  //         if (range) {
+  //           editor?.insertEmbed(range.index, 'image', imageUrl);
+  //         }
+  //       } catch (error) {
+  //         console.error('이미지 업로드 실패:', error);
+  //         alert('이미지 업로드 중 오류가 발생했습니다.');
+  //       }
+  //     }
+  //   };
+  // };
 
   const modules = useMemo(() => {
     return {

@@ -13,12 +13,11 @@ import OAuthCallback from './pages/OAuthCallback';
 
 import './css/tailwind.css';
 import './css/custom.css';
-import { useEffect } from 'react';
 import SearchResults from './pages/SearchResults';
 // import { updateAllPostsFormat } from './firebase/firestoreService';
 
 function App() {
-  const location = useLocation();
+  // const location = useLocation();
 
   // useEffect(() => {
   //   const boardName = location.pathname.split('/')[1];
