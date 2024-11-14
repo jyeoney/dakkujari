@@ -109,14 +109,14 @@ const CommentSection = ({ postId }: { postId: string }) => {
               {user && nickname === comment.author && (
                 <div className="flex space-x-2">
                   <button
-                    onClick={() => handleDeleteComment(comment.id)}
-                    className="hover:underline hover:text-red-500">
-                    삭제
-                  </button>
-                  <button
                     onClick={() => handleEditComment(comment)}
                     className="hover:underline hover:text-sky-500">
                     수정
+                  </button>
+                  <button
+                    onClick={() => handleDeleteComment(comment.id)}
+                    className="hover:underline hover:text-red-500">
+                    삭제
                   </button>
                 </div>
               )}
