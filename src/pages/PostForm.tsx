@@ -9,8 +9,8 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import 'react-quill/dist/quill.snow.css';
-import ReactQuill, { Quill } from 'react-quill-new';
-// import ReactQuill, { Quill } from 'react-quill';
+// import ReactQuill, { Quill } from 'react-quill-new';
+import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from 'quill-image-resize-module-react';
 // import imageResize from 'quill-image-resize';
 // import * as Parchment from 'parchment';
