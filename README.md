@@ -1,50 +1,60 @@
-# React + TypeScript + Vite
+# 📓 다꾸 커뮤니티 - 다꾸자리
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**다**이어리를 **꾸**미고 **자**랑하고 **리**뷰하고!
 
-Currently, two official plugins are available:
+## 프로젝트 소개
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+다이어리 꾸미기(다꾸)를 좋아하는 사람들이 모여 자신의 작품을 공유하고, 팁과 아이디어를 나누며, 다꾸와 관련된 다양한 정보를 교환할 수 있는 다꾸 전문 커뮤니티
 
-## Expanding the ESLint configuration
+### ✏️기획 의도
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+기존의 다꾸 커뮤니티는 다꾸 외에도 다양한 꾸미기 분야를 포함하고 있어, 다꾸에 집중한 소통의 공간이 필요함을 느꼈습니다.
+<br>
+**다꾸자리**는 다꾸를 사랑하는 사람들을 위한 맞춤형 플랫폼으로, 다꾸에 특화된 정보를 빠르게 접하고, 같은 취미를 가진 사용자들이 소통할 수 있는 긍정적인 공간이 되기를 바랍니다.
 
-- Configure the top-level `parserOptions` property like this:
+### 🧑‍💻 주요 기능
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+1. 회원가입 및 로그인
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+   - 이메일 가입: 사용자가 직접 닉네임 설정
+   - 구글 소셜 로그인: Goole ID를 기반으로 자동 닉네임 생성
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+2. 게시판 구성
+   - 리뷰/팁 게시판: 용품 리뷰와 꾸미기 팁을 공유하는 공간
+   - 다꾸자랑 게시판: 자신의 다꾸 작품을 공유하는 공간
+   - 다꾸 Q&A 게시판: 다꾸 관련 질문과 답변을 주고받는 공간
+3. 게시글 기능
+   - 게시글 작성/수정/삭제
+   - 댓글 작성/수정/삭제
+4. 검색 및 필터링
+   - 작성일, 작성자, 제목, 내용 등 조건을 설정하여 검색 가능
+5. 인기 게시물 TOP3
+6. 게시글 좋아요
+   - 좋아요 숫자 높은 게시물 TOP3를 홈 화면에 표시
+7. 페이지네이션
+   - 한 페이지에 10개의 게시물만 보이도록 구성
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+### 💻 기술 스택
+
+#### Front-end
+
+- React
+- React Router DOM
+- TypeScript
+- React Quill
+- Quill Image Resize Module
+- Tailwind CSS
+
+#### Back-end / Database
+
+- Firebase
+- Firestore
+
+#### Deployment
+
+- Vite
+- Vercel
+
+#### Wireframe
+
+- Whimsical
