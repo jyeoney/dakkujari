@@ -33,6 +33,12 @@ const Header = () => {
       <div className="container mx-auto flex items-center justify-between px-16 lg:px-32 py-4">
         <Link to="/" className="text-xl font-bold">
           {'다꾸자리'}
+          <p className="text-sm font-normal">
+            <span className="text-blue-400 font-bold">다</span>이어리를{' '}
+            <span className="text-blue-400 font-bold">꾸</span>미고{' '}
+            <span className="text-blue-400 font-bold">자</span>랑하고{' '}
+            <span className="text-blue-400 font-bold">리</span>뷰하고!
+          </p>
         </Link>
         <div className="flex space-x-4">
           {user ? (
