@@ -57,14 +57,14 @@ const Home = () => {
   return (
     <div className="flex flex-col space-y-8 lg:space-y-0 p-16 xl:px-28">
       <section className="w-full">
-        <div className="flex space-x-2">
+        <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
           <input
             type="date"
             value={startDate}
             onChange={e => setStartDate(e.target.value)}
             className="p-2 border border-gray-300 rounded-lg"
           />
-          <span>-</span>
+          <span className="text-center md:text-left">-</span>
           <input
             type="date"
             value={endDate}
@@ -73,7 +73,7 @@ const Home = () => {
           />
         </div>
         <div className="mt-4">
-          <div className="w-full flex flex-col md:flex-row md:space-x-2 xl:w-11/12">
+          <div className="flex flex-col md:flex-row md:space-x-2 space-y-2 md:space-y-0">
             <select
               value={searchField}
               onChange={e => setSearchField(e.target.value)}

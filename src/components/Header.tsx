@@ -30,15 +30,27 @@ const Header = () => {
 
   return (
     <header className="w-full bg-sky-100 shadow">
-      <div className="container mx-auto flex items-center justify-between px-16 lg:px-32 py-4">
-        <Link to="/" className="text-xl font-bold">
+      <div className="container mx-auto flex items-center justify-between px-16 lg:px-32 py-4 md:w-9/12">
+        <Link to="/" className="text-lg md:text-xl font-bold">
           {'다꾸자리'}
-          <p className="text-sm font-normal">
-            <span className="text-blue-400 font-bold">다</span>이어리를{' '}
-            <span className="text-blue-400 font-bold">꾸</span>미고{' '}
-            <span className="text-blue-400 font-bold">자</span>랑하고{' '}
-            <span className="text-blue-400 font-bold">리</span>뷰하고!
-          </p>
+          <div className="text-xs md:text-sm font-normal">
+            <span className="hidden sm:inline">
+              <span className="text-blue-400 font-bold">다</span>이어리를{' '}
+              <span className="text-blue-400 font-bold">꾸</span>미고{' '}
+              <span className="text-blue-400 font-bold">자</span>랑하고{' '}
+              <span className="text-blue-400 font-bold">리</span>뷰하고!
+            </span>
+            <span className="sm:hidden">
+              <div>
+                <span className="text-blue-400 font-bold">다</span>이어리를{' '}
+                <span className="text-blue-400 font-bold">꾸</span>미고
+              </div>
+              <div>
+                <span className="text-blue-400 font-bold">자</span>랑하고{' '}
+                <span className="text-blue-400 font-bold">리</span>뷰하고!
+              </div>
+            </span>
+          </div>
         </Link>
         <div className="flex space-x-4">
           {user ? (
@@ -75,7 +87,7 @@ const Header = () => {
           )}
         </div>
       </div>
-      <nav className="container mx-auto flex justify-center space-x-4 py-2">
+      <nav className="container mx-auto flex justify-center space-x-4 py-2 md:px-16 w-11/12">
         <Link
           className={`px-4 py-2 rounded-lg hover:bg-sky-300 hover:text-white transition ${
             isCurrentPage('/reviewAndTips') && 'bg-sky-300 text-white'

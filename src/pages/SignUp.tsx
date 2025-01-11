@@ -91,7 +91,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="flex justify-center h-screen">
+    <div className="flex flex-col md:space-y-8 md:p-16 justify-center">
       <form onSubmit={handleSubmit} className="w-full p-8">
         <div className="mb-4">
           <label htmlFor="email">이메일</label>

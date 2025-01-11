@@ -76,7 +76,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="flex justify-center h-screen">
+    <div className="flex flex-col md:space-y-8 md:p-16 justify-center">
       <div className="w-full p-8">
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
