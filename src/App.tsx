@@ -39,9 +39,9 @@ function App() {
   // }, [location]);
 
   return (
-    <div className="flex flex-col items-center w-full min-h-screen bg-white">
+    <div className="flex flex-col items-center w-full min-h-screen bg-white max-w-[100vw] overflow-x-hidden">
       <Header />
-      <main className="flex-grow container mx-auto px-4 lg:px-20">
+      <main className="flex-grow w-full max-w-7xl mx-auto px-6 lg:px-20">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/sign-in" element={<SignIn />} />
