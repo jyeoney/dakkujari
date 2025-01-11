@@ -50,11 +50,11 @@ const Header = () => {
 
               <button
                 onClick={handleSignOut}
-                className="px-3 py-1 bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
+                className="w-20 px-3 py-1 bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition whitespace-pre-wrap text-center">
                 로그아웃
               </button>
               <button
-                className="px-3 py-1 bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition"
+                className="w-20 px-3 py-1 bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition whitespace-pre-wrap text-center"
                 onClick={handleDeleteAccount}>
                 회원 탈퇴
               </button>
@@ -62,12 +62,12 @@ const Header = () => {
           ) : (
             <div className="flex flex-col items-end space-y-1">
               <Link to="/sign-in">
-                <button className="px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
+                <button className="w-20 px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
                   로그인
                 </button>
               </Link>
               <Link to="/sign-up">
-                <button className="px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition">
+                <button className="w-20 px-3 py-1 text-sm bg-gray-200 rounded-md hover:bg-sky-300 hover:text-white transition text-center">
                   회원가입
                 </button>
               </Link>
