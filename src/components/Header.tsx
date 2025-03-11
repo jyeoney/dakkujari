@@ -90,17 +90,17 @@ const Header = () => {
       <nav className="container mx-auto flex justify-center space-x-4 py-2 md:px-16 w-11/12">
         <Link
           className={`px-4 py-2 rounded-lg hover:bg-sky-300 hover:text-white transition ${
-            isCurrentPage('/reviewAndTips') && 'bg-sky-300 text-white'
-          }`}
-          to="/reviewAndTips">
-          리뷰/팁 게시판
-        </Link>
-        <Link
-          className={`px-4 py-2 rounded-lg  hover:bg-sky-300 hover:text-white transition ${
             isCurrentPage('/dakkuGallery') && 'bg-sky-300 text-white'
           }`}
           to="/dakkuGallery">
           다꾸자랑 게시판
+        </Link>
+        <Link
+          className={`px-4 py-2 rounded-lg hover:bg-sky-300 hover:text-white transition ${
+            isCurrentPage('/reviewAndTips') && 'bg-sky-300 text-white'
+          }`}
+          to="/reviewAndTips">
+          리뷰/팁 게시판
         </Link>
         <Link
           className={`px-4 py-2 rounded-lg hover:bg-sky-300 hover:text-white transition ${
