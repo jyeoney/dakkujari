@@ -1,37 +1,36 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Post, getPost } from '../firebase/firestoreService';
 import Pagination from './Pagination';
 import { useAuth } from '../hooks/useAuth';
+import { BoardProps } from '../hoc/withBoard';
 
-const Board = () => {
+const Board = ({ boardKey, boardTitle }: BoardProps) => {
   const navigate = useNavigate();
-  const [posts, setPosts] = useState<Post[]>([]);
-  const { boardName } = useParams<{ boardName: string }>();
   const location = useLocation();
+  const { isSignIn } = useAuth();
+
+  const [posts, setPosts] = useState<Post[]>([]);
+  const postPerPage = 10;
 
   const queryParams = new URLSearchParams(location.search);
   const initialPage = queryParams.get('page')
     ? Number(queryParams.get('page')!)
     : 1;
   const [currentPage, setCurrentPage] = useState(initialPage);
-  const postPerPage = 10;
-
-  const { isSignIn } = useAuth();
 
   useEffect(() => {
     const fetchPosts = async () => {
-      if (boardName) {
-        const fetchedPost = (await getPost(boardName)) as Post[];
-        fetchedPost.sort((a, b) => {
-          return b.createdAt.getTime() - a.createdAt.getTime();
-        });
+      const fetchedPost = (await getPost(boardKey)) as Post[];
+      fetchedPost.sort((a, b) => {
+        return b.createdAt.getTime() - a.createdAt.getTime();
+      });
 
-        setPosts(fetchedPost);
-      }
+      setPosts(fetchedPost);
     };
+
     fetchPosts();
-  }, [boardName]);
+  }, [boardKey]);
 
   const indexOfLastPost = currentPage * postPerPage;
   const indexOfFirstPost = indexOfLastPost - postPerPage;
@@ -39,24 +38,25 @@ const Board = () => {
 
   const handleNewPostClick = () => {
     if (isSignIn) {
-      navigate(`/${boardName}/newPost`);
+      navigate(`/${boardKey}/newPost`);
     } else {
       alert('글쓰기는 로그인 후 이용 가능합니다.');
     }
   };
 
   const handlePostClick = (postId: string) => {
-    navigate(`/${boardName}/post/${postId}?page=${currentPage}`);
+    navigate(`/${boardKey}/post/${postId}?page=${currentPage}`);
   };
 
   const updatePage = (page: number) => {
     setCurrentPage(page);
-    navigate(`/${boardName}?page=${page}`);
+    navigate(`/${boardKey}?page=${page}`);
   };
 
   return (
     <div className="flex flex-col md:space-y-8 md:p-16 justify-center">
       <div className="container mx-auto p-10">
+        <h2 className="text-2xl font-bold mb-6">{boardTitle}</h2>
         {!location.pathname.includes('newPost') && (
           <div className="flex justify-end mb-4">
             <button
@@ -114,7 +114,6 @@ const Board = () => {
             setCurrentPage={updatePage}
           />
         </div>
-        {/* <Outlet /> */}
       </div>
     </div>
   );

@@ -1,3 +1,12 @@
+export interface BoardConfig {
+  path: string;
+  display: string;
+  description: string;
+  requireAuth: boolean;
+  categories?: string[];
+  allowPurpose?: boolean;
+}
+
 export const BOARD_CONFIG = {
   dakkuGallery: '다꾸자랑 게시판',
   reviewAndTips: '리뷰/팁 게시판',

@@ -4,9 +4,6 @@ import Home from './pages/Home';
 import SignIn from './pages/SignIn';
 import SignUp from './pages/SignUp';
 import PostForm from './pages/PostForm';
-import DakkuGallery from './pages/DakkuGallery';
-import ReviewAndTips from './pages/ReviewAndTips';
-import DakkuQnA from './pages/DakkuQnA';
 import PostDetail from './pages/PostDetail';
 import CreateNickname from './pages/CreateNickname';
 import OAuthCallback from './pages/OAuthCallback';
@@ -14,6 +11,7 @@ import OAuthCallback from './pages/OAuthCallback';
 import './css/tailwind.css';
 import './css/custom.css';
 import SearchResults from './pages/SearchResults';
+import BoardPage from './pages/BoardPage';
 // import { updateAllPostsFormat } from './firebase/firestoreService';
 
 function App() {
@@ -27,12 +25,10 @@ function App() {
           <Route path="/sign-up" element={<SignUp />} />
           <Route path="/create-nickname" element={<CreateNickname />} />
           <Route path="/auth/kakao/callback" element={<OAuthCallback />} />
-          <Route path="/:boardName" element={<DakkuGallery />} />
-          <Route path="/:boardName" element={<ReviewAndTips />} />
-          <Route path="/:boardName" element={<DakkuQnA />} />
-          <Route path=":boardName/newPost" element={<PostForm />} />
-          <Route path=":boardName/post/:postId" element={<PostDetail />} />
-          <Route path=":boardName/editPost/:postId" element={<PostForm />} />
+          <Route path="/:boardName" element={<BoardPage />} />
+          <Route path="/:boardName/newPost" element={<PostForm />} />
+          <Route path="/:boardName/post/:postId" element={<PostDetail />} />
+          <Route path="/:boardName/editPost/:postId" element={<PostForm />} />
           <Route path="/search" element={<SearchResults />} />
         </Routes>
       </main>
