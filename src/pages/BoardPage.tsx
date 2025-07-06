@@ -4,4 +4,4 @@ import { withBoard } from '../hoc/withBoard';
 
 const MemoizedBoard = React.memo(Board);
 
-export default withBoard(Board);
+export default withBoard(MemoizedBoard);

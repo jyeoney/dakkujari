@@ -10,6 +10,7 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+build
 *.local
 
 # Editor directories and files
@@ -26,3 +27,6 @@ dist-ssr
 .env
 .vercel
 !.vscode/settings.json
+
+# TypeScript 빌드 정보 파일 (새로 추가)
+*.tsbuildinfo
