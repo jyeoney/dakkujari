@@ -19,5 +19,6 @@
   "[typescriptreact]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  },
+  "cSpell.words": ["dakku", "dakkujari", "firestore", "Kakao"]
 }
