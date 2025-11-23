@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
-import { getTopPosts } from '../firebase/firestoreService';
+import { useEffect, useState, useMemo } from 'react';
+import { getTopPosts } from '../api/postApi';
+import { IPost } from '../types/post';
 import { useNavigate } from 'react-router-dom';
 import { VscHeartFilled } from 'react-icons/vsc';
 import { BOARD_CONFIG } from '../constant/boardConfig';
@@ -19,12 +20,13 @@ const Home = () => {
     setEndDate
   } = useSearch();
 
-  const [topPosts, setTopPosts] = useState<{ board: string; posts: any[] }[]>(
+  const [topPosts, setTopPosts] = useState<{ board: string; posts: IPost[] }[]>(
     []
   );
-  const boardNames = Object.keys(BOARD_CONFIG) as Array<
-    keyof typeof BOARD_CONFIG
-  >;
+  const boardNames = useMemo(
+    () => Object.keys(BOARD_CONFIG) as Array<keyof typeof BOARD_CONFIG>,
+    []
+  );
   const navigate = useNavigate();
   const { isSignIn } = useAuth();
 
@@ -40,7 +42,7 @@ const Home = () => {
     };
 
     fetchTopPosts();
-  }, []);
+  }, [boardNames]);
 
   const handleClickPost = (boardName: string, postId: string) => {
     navigate(`/${boardName}/post/${postId}`);

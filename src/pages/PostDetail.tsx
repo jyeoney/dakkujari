@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Post, deletePost } from '../firebase/firestoreService';
+import { deletePost } from '../api/postApi';
+import { IPost } from '../types/post';
 import {
   arrayRemove,
   arrayUnion,
@@ -20,12 +21,12 @@ const PostDetail = () => {
     boardName: string;
     postId: string;
   }>();
-  const [post, setPost] = useState<Post | null>(null);
+  const [post, setPost] = useState<IPost | null>(null);
   const { isSignIn, nickname } = useAuth();
   const navigate = useNavigate();
 
   const [liked, setLiked] = useState(false);
-  const [likecount, setLikeCount] = useState(0);
+  const [likeCount, setLikeCount] = useState(0);
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
@@ -39,7 +40,7 @@ const PostDetail = () => {
               createdAt: postDoc.data().createdAt.toDate(),
               likeCount: postDoc.data().likeCount || 0,
               ...postDoc.data()
-            } as Post);
+            } as IPost);
             const hasLiked = postDoc.data().likeByUsers?.includes(nickname);
             // setLiked(postDoc.data().includes(authContext?.nickname));
             // setLikeCount(postDoc.data().likeCount || 0);
@@ -143,7 +144,7 @@ const PostDetail = () => {
                 <VscHeart size={20} />
               )}
               <span className="ml-2 text-xl relative top-[1px]">
-                {likecount}
+                {likeCount}
               </span>
             </button>
             {isSignIn && post.nickname === nickname && (

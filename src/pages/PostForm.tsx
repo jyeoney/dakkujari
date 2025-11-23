@@ -1,23 +1,13 @@
 import { useState, FormEvent, useEffect, useRef, useMemo } from 'react';
-import {
-  Post,
-  addPost,
-  getPost,
-  updatePost
-  // uploadImage
-} from '../firebase/firestoreService';
+import { addPost, getPost, updatePost } from '../api/postApi';
+import { IPost } from '../types/post';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import 'react-quill/dist/quill.snow.css';
-// import ReactQuill, { Quill } from 'react-quill-new';
 import ReactQuill, { Quill } from 'react-quill';
 import ImageResize from 'quill-image-resize-module-react';
-// import imageResize from 'quill-image-resize';
-// import * as Parchment from 'parchment';
 
 Quill.register('modules/imageResize', ImageResize);
-// Quill.register('formats/list', true);
-// Quill.register('parchment', Parchment);
 
 const PostForm = () => {
   const { boardName, postId } = useParams<{
@@ -28,7 +18,6 @@ const PostForm = () => {
   const [category, setCategory] = useState('');
   const [purpose, setPurpose] = useState('');
   const [content, setContent] = useState('');
-  // const [imageFile, setImageFile] = useState<File | null>(null);
   const navigate = useNavigate();
   const { nickname } = useAuth();
   const quillRef = useRef<ReactQuill>(null);
@@ -52,7 +41,7 @@ const PostForm = () => {
   useEffect(() => {
     const loadPost = async () => {
       if (boardName && postId) {
-        const post = (await getPost(boardName, postId)) as Post;
+        const post = (await getPost(boardName, postId)) as IPost;
         setTitle(post.title);
         setCategory(post.category);
         setPurpose(post.purpose || '');
@@ -62,7 +51,7 @@ const PostForm = () => {
     loadPost();
   }, [boardName, postId]);
 
-  const handleSumbit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     const requiresPurpose = currentOptions?.purposes
@@ -82,7 +71,6 @@ const PostForm = () => {
         content: contentHtml,
         category,
         purpose: requiresPurpose ? purpose || null : null
-        // imageFile
       });
     } else {
       addPost(
@@ -92,7 +80,6 @@ const PostForm = () => {
         nickname,
         category,
         requiresPurpose ? purpose || null : null
-        // imageFile
       );
     }
     navigate(`/${boardName}`);
@@ -100,31 +87,6 @@ const PostForm = () => {
   const handleCancel = () => {
     navigate(`/${boardName}`);
   };
-
-  // const imageHandler = async () => {
-  //   const input = document.createElement('input');
-  //   input.setAttribute('type', 'file');
-  //   input.setAttribute('accept', 'image/*');
-  //   input.click();
-
-  //   input.onchange = async () => {
-  //     const file = input.files?.[0];
-  //     if (file) {
-  //       try {
-  //         console.log(file);
-  //         const imageUrl = await uploadImage(file);
-  //         const editor = quillRef.current?.getEditor();
-  //         const range = editor?.getSelection();
-  //         if (range) {
-  //           editor?.insertEmbed(range.index, 'image', imageUrl);
-  //         }
-  //       } catch (error) {
-  //         console.error('이미지 업로드 실패:', error);
-  //         alert('이미지 업로드 중 오류가 발생했습니다.');
-  //       }
-  //     }
-  //   };
-  // };
 
   const modules = useMemo(() => {
     return {
@@ -139,9 +101,6 @@ const PostForm = () => {
           ['link', 'image'],
           ['clean']
         ]
-        // handlers: {
-        //   image: imageHandler
-        // }
       },
       clipboard: {
         matchVisual: false
@@ -156,7 +115,7 @@ const PostForm = () => {
   return (
     <form
       className="container mx-auto py-10 px-2 w-11/12"
-      onSubmit={handleSumbit}>
+      onSubmit={handleSubmit}>
       <table className="w-full mb-4 border-collapse">
         <tbody>
           <tr>
@@ -237,7 +196,6 @@ const PostForm = () => {
             'strike',
             'blockquote',
             'list',
-            // 'bullet',
             'align',
             'color',
             'background',

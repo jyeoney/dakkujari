@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getAllPostsBySearchQuery } from '../firebase/firestoreService';
+import { getAllPostsBySearchQuery } from '../api/postApi';
 
 interface SearchResult {
   id: string;

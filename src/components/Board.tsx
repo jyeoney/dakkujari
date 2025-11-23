@@ -1,16 +1,17 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { Post, getPost } from '../firebase/firestoreService';
+import { getPost } from '../api/postApi';
+import { IPost } from '../types/post';
 import Pagination from './Pagination';
 import { useAuth } from '../hooks/useAuth';
-import { BoardProps } from '../hoc/withBoard';
+import { IBoardProps } from '../hoc/withBoard';
 
-const Board = ({ boardKey, boardTitle }: BoardProps) => {
+const Board = ({ boardKey, boardTitle }: IBoardProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isSignIn } = useAuth();
 
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [posts, setPosts] = useState<IPost[]>([]);
   const postPerPage = 10;
 
   const queryParams = new URLSearchParams(location.search);
@@ -21,7 +22,7 @@ const Board = ({ boardKey, boardTitle }: BoardProps) => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      const fetchedPost = (await getPost(boardKey)) as Post[];
+      const fetchedPost = (await getPost(boardKey)) as IPost[];
       fetchedPost.sort((a, b) => {
         return b.createdAt.getTime() - a.createdAt.getTime();
       });

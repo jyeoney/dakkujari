@@ -5,17 +5,11 @@ import {
   deleteComment,
   getComments,
   updateComment
-} from '../firebase/firestoreService';
-
-export interface Comment {
-  id: string;
-  content: string;
-  author: string;
-  createdAt: Date;
-}
+} from '../api/commentApi';
+import { IComment } from '../types/post';
 
 const CommentSection = ({ postId }: { postId: string }) => {
-  const [comments, setComments] = useState<Comment[]>([]);
+  const [comments, setComments] = useState<IComment[]>([]);
   const [newComment, setNewComment] = useState('');
   const { user, nickname, isSignIn } = useAuth();
 
@@ -65,7 +59,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
     }
   };
 
-  const handleEditComment = (comment: Comment) => {
+  const handleEditComment = (comment: IComment) => {
     setEditingCommentId(comment.id);
     setEditingCommentContent(comment.content);
   };
