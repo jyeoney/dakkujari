@@ -1,6 +1,5 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/firebaseConfig';
-import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   collection,
@@ -10,145 +9,140 @@ import {
   setDoc,
   where
 } from 'firebase/firestore';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import * as z from 'zod';
+
+/** 닉네임 중복 체크 */
+const checkDuplicateNickname = async (nickname: string) => {
+  const usersCollection = collection(db, 'users');
+  const q = query(usersCollection, where('nickname', '==', nickname));
+  const snapshot = await getDocs(q);
+  return !snapshot.empty;
+};
+
+const schema = z
+  .object({
+    email: z
+      .email('이메일 형식이 올바르지 않습니다.')
+      .min(1, '이메일을 입력해주세요.'),
+    nickname: z.string().min(1, '닉네임을 입력해주세요.'),
+    password: z.string().min(6, '비밀번호는 최소 6자 이상이어야 합니다.'),
+    confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요.')
+  })
+  .refine(data => data.password === data.confirmPassword, {
+    message: '비밀번호가 일치하지 않습니다.',
+    path: ['confirmPassword']
+  });
 
 const SignUp = () => {
-  const [email, setEmail] = useState('');
-  const [nickname, setNickname] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [isNicknameTaken, setIsNicknameTaken] = useState(false);
   const navigate = useNavigate();
 
-  const checkDuplicateNickname = async (nickname: string) => {
-    const usersCollection = collection(db, 'users');
-    const q = query(usersCollection, where('nickname', '==', nickname));
-    const snapshot = await getDocs(q);
-    return !snapshot.empty;
-  };
+  const {
+    handleSubmit,
+    register,
+    setError,
+    formState: { errors }
+  } = useForm<z.infer<typeof schema>>({
+    resolver: zodResolver(schema),
+    mode: 'onBlur'
+  });
 
-  useEffect(() => {
-    const checkNickname = async () => {
-      if (nickname) {
-        const isTaken = await checkDuplicateNickname(nickname);
-        setIsNicknameTaken(isTaken);
-        setError(
-          isTaken
-            ? '이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.'
-            : null
-        );
-      } else {
-        setIsNicknameTaken(false);
-        setError(null);
-      }
-    };
-
-    checkNickname();
-  }, [nickname]);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-
-    if (isNicknameTaken) {
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      setError('비밀번호가 일치하지 않습니다.');
-      return;
-    }
+  const onSubmit = async (data: z.infer<typeof schema>) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
-        email,
-        password
+        data.email,
+        data.password
       );
-      const user = userCredential.user;
+      const { user } = userCredential;
 
       await setDoc(doc(db, 'users', user.uid), {
-        email,
-        nickname
+        email: data.email,
+        nickname: data.nickname
       });
       alert('회원가입이 성공적으로 완료되었습니다!');
       navigate('/');
     } catch (error) {
       if (error instanceof Error) {
-        console.log('Error signing up:', error);
-        setError(error.message);
+        setError('root', {
+          message: error.message,
+          type: 'manual'
+        });
       } else {
-        console.log('Unknown error:', error);
-        setError('Unknown error');
+        setError('root', {
+          message: '알 수 없는 오류가 발생했습니다.',
+          type: 'manual'
+        });
       }
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (name === 'email') setEmail(value);
-    else if (name === 'nickname') setNickname(value);
-    else if (name === 'password') setPassword(value);
-    else if (name === 'confirmPassword') setConfirmPassword(value);
-  };
-
   return (
     <div className="flex flex-col md:space-y-8 md:p-16 justify-center">
-      <form onSubmit={handleSubmit} className="w-full p-8">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="w-full p-8">
         <div className="mb-4">
           <label htmlFor="email">이메일</label>
           <input
             id="email"
-            name="email"
+            {...register('email')}
             type="text"
             placeholder="이메일을 입력하세요"
-            required
-            value={email}
-            onChange={handleChange}
             className="w-full px-3 py-2 border rounded"
           />
+          {errors.email && (
+            <p className="text-red-500">{errors.email?.message}</p>
+          )}
         </div>
         <div className="mb-4">
           <label htmlFor="nickname">닉네임</label>
           <input
             id="nickname"
-            name="nickname"
+            {...register('nickname', {
+              validate: async value => {
+                if (!value) return true;
+                const isTaken = await checkDuplicateNickname(value);
+                return (
+                  !isTaken ||
+                  '이미 사용중인 닉네임입니다. 다른 닉네임을 선택해주세요.'
+                );
+              }
+            })}
             type="text"
             placeholder="닉네임을 입력하세요"
-            required
-            value={nickname}
-            onChange={handleChange}
             className="w-full px-3 py-2 border rounded"
           />
+          {errors.nickname && (
+            <p className="text-red-500">{errors.nickname?.message}</p>
+          )}
         </div>
-        {isNicknameTaken && <p className="text-red-500">{error}</p>}
         <div className="mb-4">
           <label htmlFor="password"> 비밀번호</label>
           <input
             id="password"
-            name="password"
+            {...register('password')}
             type="password"
             placeholder="비밀번호를 입력하세요"
-            required
-            value={password}
-            onChange={handleChange}
             className="w-full px-3 py-2 border rounded"
           />
+          {errors.password && (
+            <p className="text-red-500">{errors.password?.message}</p>
+          )}
         </div>
         <div className="mb-4">
           <label htmlFor="confirmPassword"> 비밀번호 확인</label>
           <input
             id="confirmPassword"
-            name="confirmPassword"
+            {...register('confirmPassword')}
             type="password"
             placeholder="비밀번호를 다시 입력하세요"
-            required
-            value={confirmPassword}
-            onChange={handleChange}
             className="w-full px-3 py-2 border rounded"
           />
+          {errors.confirmPassword && (
+            <p className="text-red-500">{errors.confirmPassword?.message}</p>
+          )}
         </div>
-        {error && !isNicknameTaken && (
-          <p className="text-red-500 mb-4">{error}</p>
-        )}
+        {errors.root && <p className="text-red-500">{errors.root.message}</p>}
         <div className="flex space-x-4">
           <button
             type="button"
