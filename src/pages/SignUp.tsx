@@ -13,14 +13,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
-/** 닉네임 중복 체크 */
-const checkDuplicateNickname = async (nickname: string) => {
-  const usersCollection = collection(db, 'users');
-  const q = query(usersCollection, where('nickname', '==', nickname));
-  const snapshot = await getDocs(q);
-  return !snapshot.empty;
-};
-
 const schema = z
   .object({
     email: z
@@ -37,6 +29,14 @@ const schema = z
 
 const SignUp = () => {
   const navigate = useNavigate();
+
+  /** 닉네임 중복 체크 */
+  const checkDuplicateNickname = async (nickname: string) => {
+    const usersCollection = collection(db, 'users');
+    const q = query(usersCollection, where('nickname', '==', nickname));
+    const snapshot = await getDocs(q);
+    return !snapshot.empty;
+  };
 
   const {
     handleSubmit,
