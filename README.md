@@ -12,12 +12,25 @@
 <br>
 **다꾸자리**는 다꾸를 사랑하는 사람들을 위한 맞춤형 플랫폼으로, 다꾸에 특화된 정보를 빠르게 접하고, 같은 취미를 가진 사용자들이 소통할 수 있는 긍정적인 공간이 되기를 바랍니다.
 
+## 설치 및 실행
+
+```bash
+# 의존성 설치
+npm install
+
+# 개발 서버 실행
+npm run dev
+
+# 빌드
+npm run build
+```
+
 ### 🧑‍💻 주요 기능
 
 1. 회원가입 및 로그인
 
    - 이메일 가입: 사용자가 직접 닉네임 설정
-   - 구글 소셜 로그인: Goole ID를 기반으로 자동 닉네임 생성
+   - 구글 소셜 로그인: Google ID를 기반으로 자동 닉네임 생성
 
 2. 게시판 구성
    - 리뷰/팁 게시판: 용품 리뷰와 꾸미기 팁을 공유하는 공간
@@ -50,6 +63,12 @@
 - Firebase
 - Firestore
 
+#### Testing
+
+- Vitest
+- React Testing Library
+- Happy DOM
+
 #### Deployment
 
 - Vite
@@ -58,3 +77,10 @@
 #### Wireframe
 
 - Whimsical
+
+## 테스트
+
+```bash
+npm test          # 테스트 실행
+npm run test:run  # 테스트 한 번만 실행
+```
