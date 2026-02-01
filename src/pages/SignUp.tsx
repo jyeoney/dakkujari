@@ -11,21 +11,21 @@ import {
 } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { signUpSchema, TSignUpSchema } from './SignUp.schema';
 
-const schema = z
-  .object({
-    email: z
-      .email('이메일 형식이 올바르지 않습니다.')
-      .min(1, '이메일을 입력해주세요.'),
-    nickname: z.string().min(1, '닉네임을 입력해주세요.'),
-    password: z.string().min(6, '비밀번호는 최소 6자 이상이어야 합니다.'),
-    confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요.')
-  })
-  .refine(data => data.password === data.confirmPassword, {
-    message: '비밀번호가 일치하지 않습니다.',
-    path: ['confirmPassword']
-  });
+// const schema = z
+//   .object({
+//     email: z
+//       .email('이메일 형식이 올바르지 않습니다.')
+//       .min(1, '이메일을 입력해주세요.'),
+//     nickname: z.string().min(1, '닉네임을 입력해주세요.'),
+//     password: z.string().min(6, '비밀번호는 최소 6자 이상이어야 합니다.'),
+//     confirmPassword: z.string().min(1, '비밀번호 확인을 입력해주세요.')
+//   })
+//   .refine(data => data.password === data.confirmPassword, {
+//     message: '비밀번호가 일치하지 않습니다.',
+//     path: ['confirmPassword']
+//   });
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -43,12 +43,12 @@ const SignUp = () => {
     register,
     setError,
     formState: { errors }
-  } = useForm<z.infer<typeof schema>>({
-    resolver: zodResolver(schema),
+  } = useForm<TSignUpSchema>({
+    resolver: zodResolver(signUpSchema),
     mode: 'onBlur'
   });
 
-  const onSubmit = async (data: z.infer<typeof schema>) => {
+  const onSubmit = async (data: TSignUpSchema) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,
