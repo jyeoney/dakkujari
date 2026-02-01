@@ -19,7 +19,8 @@ import { BOARD_NAMES } from '../constant/boardConfig';
 import { IPost } from '../types/post';
 import { uploadImage } from '../firebase/firestoreService';
 
-const tokenizeText = (text: string): string[] => {
+/** 텍스트를 토큰화하는 함수 */
+export const tokenizeText = (text: string): string[] => {
   const parser = new DOMParser();
   const doc = parser.parseFromString(text, 'text/html');
   const plainText = doc.body.textContent || '';
