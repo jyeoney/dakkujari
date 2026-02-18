@@ -6,6 +6,7 @@ import { VscHeartFilled } from 'react-icons/vsc';
 import { BOARD_CONFIG } from '../constant/boardConfig';
 import useSearch from '../hooks/useSearch';
 import { useAuth } from '../hooks/useAuth';
+import { Button } from '@/components/ui/button';
 
 const Home = () => {
   const {
@@ -97,12 +98,9 @@ const Home = () => {
               }}
               className="w-full md:flex-1 p-2 border border-gray-300 rounded-lg mb-2 md:mb-0"
             />
-
-            <button
-              onClick={handleSearch}
-              className="w-full md:w-auto bg-sky-300 text-white p-2 rounded-lg">
+            <Button className="h-auto" onClick={handleSearch}>
               검색
-            </button>
+            </Button>
           </div>
         </div>
       </section>
