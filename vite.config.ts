@@ -4,7 +4,8 @@ import { defineConfig } from 'vitest/config';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any -- Vitest 번들링 Vite와 프로젝트 Vite 타입 불일치
+  plugins: [react()] as any,
   test: {
     globals: true,
     environment: 'happy-dom',
@@ -15,5 +16,4 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src')
     }
   }
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-} as any);
+});
