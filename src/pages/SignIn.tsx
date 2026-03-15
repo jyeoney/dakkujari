@@ -12,7 +12,7 @@ import { FcGoogle } from 'react-icons/fc';
 import { RiKakaoTalkFill } from 'react-icons/ri';
 
 const SignIn = () => {
-  const { setUser, setNickname } = useAuth();
+  const { setUser } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -55,11 +55,10 @@ const SignIn = () => {
 
       if (!userDoc.exists()) {
         await setDoc(doc(db, 'users', user.uid), {
-          nickname: user.displayName || '사용자'
+          email: user.email
         });
       }
       setUser(user);
-      setNickname(user.displayName || '사용자');
 
       navigate('/');
     } catch (error) {
