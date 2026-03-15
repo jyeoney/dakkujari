@@ -37,7 +37,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
   const handleSubmitComment = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-    if (!isSignIn) {
+    if (!isSignIn || !nickname) {
       alert('로그인 후 댓글을 작성할 수 있습니다.');
       return;
     }
