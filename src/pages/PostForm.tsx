@@ -58,7 +58,7 @@ const PostForm = () => {
       ? currentOptions.purposes.length > 0
       : false;
 
-    if (!title || !content || !category || (requiresPurpose && !purpose)) {
+    if (!title || !content || !category || (requiresPurpose && !purpose) || !nickname) {
       alert('입력되지 않은 항목이 있습니다!');
       return;
     }

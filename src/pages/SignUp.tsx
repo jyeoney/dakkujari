@@ -1,6 +1,7 @@
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth, db } from '../firebase/firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import {
   collection,
   doc,
@@ -29,6 +30,7 @@ import { signUpSchema, TSignUpSchema } from './SignUp.schema';
 
 const SignUp = () => {
   const navigate = useNavigate();
+  const { setNickname } = useAuth();
 
   /** 닉네임 중복 체크 */
   const checkDuplicateNickname = async (nickname: string) => {
@@ -61,6 +63,7 @@ const SignUp = () => {
         email: data.email,
         nickname: data.nickname
       });
+      setNickname(data.nickname);
       alert('회원가입이 성공적으로 완료되었습니다!');
       navigate('/');
     } catch (error) {

@@ -2,11 +2,13 @@ import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase/firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
+import { useAuth } from '../hooks/useAuth';
 
 const CreateNickname = () => {
   const [nickname, setNickname] = useState('');
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { setNickname: setContextNickname } = useAuth();
 
   const handleNicknameSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -17,6 +19,7 @@ const CreateNickname = () => {
           nickname,
           email: user.email
         });
+        setContextNickname(nickname);
         navigate('/');
       }
     } catch (error) {
