@@ -16,7 +16,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
 import { BOARD_NAMES } from '../constant/boardConfig';
-import { IPost } from '../types/post';
+import { Post } from '../types/post';
 import { uploadImage } from '../firebase/firestoreService';
 
 /** 텍스트를 토큰화하는 함수 */
@@ -64,7 +64,7 @@ export const addPost = async (
 export const getPost = async (
   boardName: string,
   postId?: string
-): Promise<IPost | IPost[]> => {
+): Promise<Post | Post[]> => {
   if (postId) {
     const postDoc = await getDoc(doc(db, boardName, postId));
     if (postDoc.exists()) {
@@ -80,7 +80,7 @@ export const getPost = async (
         likeCount: data.likeCount || 0,
         likeByUsers: data.likeByUsers || [],
         imageUrl: data.imageUrl || null
-      } as IPost;
+      } as Post;
     } else {
       throw new Error('게시물을 찾을 수 없습니다.');
     }
@@ -184,7 +184,7 @@ export const getAllPostsBySearchQuery = async (
 };
 
 /** 인기 게시물 조회 */
-export const getTopPosts = async (boardName: string): Promise<IPost[]> => {
+export const getTopPosts = async (boardName: string): Promise<Post[]> => {
   const postsCollection = collection(db, boardName);
   const q = query(postsCollection, orderBy('likeCount', 'desc'), limit(3));
 
@@ -201,6 +201,6 @@ export const getTopPosts = async (boardName: string): Promise<IPost[]> => {
       createdAt: data.createdAt.toDate(),
       likeCount: data.likeCount || 0,
       likeByUsers: data.likeByUsers || []
-    } as IPost;
+    } as Post;
   });
 };

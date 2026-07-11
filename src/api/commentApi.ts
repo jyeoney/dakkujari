@@ -8,7 +8,7 @@ import {
   updateDoc
 } from 'firebase/firestore';
 import { db } from '../firebase/firebaseConfig';
-import { IComment } from '../types/post';
+import { Comment } from '../types/post';
 
 /** 댓글 작성 */
 export const addComment = async (
@@ -24,7 +24,7 @@ export const addComment = async (
 };
 
 /** 댓글 조회 */
-export const getComments = async (postId: string): Promise<IComment[]> => {
+export const getComments = async (postId: string): Promise<Comment[]> => {
   const commentsCollection = collection(db, `posts/${postId}/comments`);
   const snapshot = await getDocs(commentsCollection);
   return snapshot.docs.map(doc => ({

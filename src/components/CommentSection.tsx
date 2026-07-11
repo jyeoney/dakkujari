@@ -6,10 +6,10 @@ import {
   getComments,
   updateComment
 } from '../api/commentApi';
-import { IComment } from '../types/post';
+import { Comment } from '../types/post';
 
 const CommentSection = ({ postId }: { postId: string }) => {
-  const [comments, setComments] = useState<IComment[]>([]);
+  const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState('');
   const { user, nickname, isSignIn } = useAuth();
 
@@ -59,7 +59,7 @@ const CommentSection = ({ postId }: { postId: string }) => {
     }
   };
 
-  const handleEditComment = (comment: IComment) => {
+  const handleEditComment = (comment: Comment) => {
     setEditingCommentId(comment.id);
     setEditingCommentContent(comment.content);
   };

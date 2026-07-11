@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { deletePost } from '../api/postApi';
-import { IPost } from '../types/post';
+import { Post } from '../types/post';
 import {
   arrayRemove,
   arrayUnion,
@@ -21,7 +21,7 @@ const PostDetail = () => {
     boardName: string;
     postId: string;
   }>();
-  const [post, setPost] = useState<IPost | null>(null);
+  const [post, setPost] = useState<Post | null>(null);
   const { isSignIn, nickname } = useAuth();
   const navigate = useNavigate();
 
@@ -40,7 +40,7 @@ const PostDetail = () => {
               createdAt: postDoc.data().createdAt.toDate(),
               likeCount: postDoc.data().likeCount || 0,
               ...postDoc.data()
-            } as IPost);
+            } as Post);
             const hasLiked = postDoc.data().likeByUsers?.includes(nickname);
             // setLiked(postDoc.data().includes(authContext?.nickname));
             // setLikeCount(postDoc.data().likeCount || 0);

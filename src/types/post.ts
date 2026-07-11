@@ -1,5 +1,5 @@
 /** Post 인터페이스 */
-export interface IPost {
+export interface Post {
   id: string;
   title: string;
   content: string;
@@ -12,7 +12,7 @@ export interface IPost {
 }
 
 /** Comment 인터페이스 */
-export interface IComment {
+export interface Comment {
   id: string;
   content: string;
   author: string;

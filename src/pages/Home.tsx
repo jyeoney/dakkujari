@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { getTopPosts } from '../api/postApi';
-import { IPost } from '../types/post';
+import { Post } from '../types/post';
 import { useNavigate } from 'react-router-dom';
 import { VscHeartFilled } from 'react-icons/vsc';
 import { BOARD_CONFIG } from '../constant/boardConfig';
@@ -21,7 +21,7 @@ const Home = () => {
     setEndDate
   } = useSearch();
 
-  const [topPosts, setTopPosts] = useState<{ board: string; posts: IPost[] }[]>(
+  const [topPosts, setTopPosts] = useState<{ board: string; posts: Post[] }[]>(
     []
   );
   const boardNames = useMemo(

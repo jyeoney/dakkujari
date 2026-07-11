@@ -3,13 +3,13 @@ import { BOARD_CONFIG } from '../constant/boardConfig';
 import { useParams } from 'react-router-dom';
 
 // 래핑된 컴포넌트에 전달될 props 인터페이스 정의
-export interface IBoardProps {
+export interface BoardProps {
   boardKey: string;
   boardTitle: string;
 }
 
 // withBoard HOC: 게시판 관련 로직을 분리하여 컴포넌트에 주입하는 고차 컴포넌트
-export const withBoard = (WrappedComponent: ComponentType<IBoardProps>) => {
+export const withBoard = (WrappedComponent: ComponentType<BoardProps>) => {
   // 새로운 컴포넌트를 반환하는 HOC 패턴(DevTools에서 식별 가능하도록 내부 컴포넌트는 기명 함수로 구현)
   function WithBoardComponent() {
     // useParams 통해 패스파라미터에서 boardName 추출

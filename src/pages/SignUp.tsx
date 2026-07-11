@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { signUpSchema, TSignUpSchema } from './SignUp.schema';
+import { signUpSchema, SignUpSchema } from '@/pages/SignUp.schema';
 
 // const schema = z
 //   .object({
@@ -45,12 +45,12 @@ const SignUp = () => {
     register,
     setError,
     formState: { errors }
-  } = useForm<TSignUpSchema>({
+  } = useForm<SignUpSchema>({
     resolver: zodResolver(signUpSchema),
     mode: 'onBlur'
   });
 
-  const onSubmit = async (data: TSignUpSchema) => {
+  const onSubmit = async (data: SignUpSchema) => {
     try {
       const userCredential = await createUserWithEmailAndPassword(
         auth,

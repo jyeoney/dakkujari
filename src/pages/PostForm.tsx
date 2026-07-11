@@ -1,6 +1,6 @@
 import { useState, FormEvent, useEffect, useRef, useMemo } from 'react';
 import { addPost, getPost, updatePost } from '../api/postApi';
-import { IPost } from '../types/post';
+import { Post } from '../types/post';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import 'react-quill/dist/quill.snow.css';
@@ -41,7 +41,7 @@ const PostForm = () => {
   useEffect(() => {
     const loadPost = async () => {
       if (boardName && postId) {
-        const post = (await getPost(boardName, postId)) as IPost;
+        const post = (await getPost(boardName, postId)) as Post;
         setTitle(post.title);
         setCategory(post.category);
         setPurpose(post.purpose || '');
